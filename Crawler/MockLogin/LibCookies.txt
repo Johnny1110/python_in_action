@@ -1,0 +1,2 @@
+#LWP-Cookies-2.0
+Set-Cookie3: HYPROXYSID="MTU3MjI4NDMyMXxOd3dBTkV3M1dqSkRXa1JGTjBWRk1rbzNSVE5QTWxWUU5FeEpTMWxHVEZSQ1UwSXpOVE5XVjBkSlExaE5UVWhRUlVoTFJ6WlhWRkU9fGVInfT-MccQxsHmnBE2HRLbNXfzvQrWjrd26pV8SoTR"; path="/"; domain=".eresources.ntub.edu.tw"; path_spec; expires="2019-10-28 19:38:41Z"; version=0
