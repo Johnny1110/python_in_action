@@ -9,6 +9,7 @@ searching_url = 'https://eresources.ntub.edu.tw:3005/ndapp/KnoBase/magol/researc
 result_list = []
 
 def do_search(my_session, key_word):
+    print("正在進行資料檢索，請稍後...")
     for i in range(min_period, max_period+1):
         post_data = {
             'addkeyword': key_word,
