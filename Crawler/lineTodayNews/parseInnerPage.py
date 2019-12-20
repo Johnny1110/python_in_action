@@ -7,23 +7,22 @@ from bs4 import BeautifulSoup
 import datetime
 
 site = "3b9c6ee9f098367f9d7be49c5bdc007b"
-classId = "100457"  # NBA
 
 outqueue = Queue()
 
-def startParse(postId, url):
+def startParse(classId, postId, url):
     resp = requests.get(url)
     resp.encoding = "utf-8"
     soup = BeautifulSoup(resp.text, features="html.parser")
     try:
-        parseArticle(postId, url, soup)  # 解析主文
+        parseArticle(classId, postId, url, soup)  # 解析主文
     except Exception as e:
         print(url, "非正常文章，無法爬取")
 
 
 
 # 爬主文
-def parseArticle(postId, url, soup):
+def parseArticle(classId, postId, url, soup):
     article = Entity()  # 資料封裝
 
     ### 取得留言json ###
@@ -54,6 +53,7 @@ def parseArticle(postId, url, soup):
     article.site = site
     article.rid = article.postId
     article.pid = ""
+    article.classId = classId
     outqueue.put(article.toList())
 
     parseComments(article)  # 解析留言 param 需傳入主文物件
@@ -89,7 +89,7 @@ def parseReply(comment):
 
 
 def parseComments(article):
-    commentAPI = generateArticleCommonsAPI(article.postId, article.replycnt, categoryId=classId)
+    commentAPI = generateArticleCommonsAPI(article.postId, article.replycnt, categoryId=article.classId)
     resp = requests.get(commentAPI)
     resp.encoding = "utf-8"
     commentViews = json.loads(resp.text)['result']['commentLikes'][0]['commentViews']
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     while 1:
         try:
             record = inqueue.get(block=False)
-            startParse(record[0], record[1])
+            startParse(record[0], record[1], record[2])
         except Empty as es:
             break
 
