@@ -4,7 +4,6 @@ import getCrawlablePage
 import requests
 import json
 from bs4 import BeautifulSoup
-from urllib import parse
 import datetime
 
 site = "3b9c6ee9f098367f9d7be49c5bdc007b"
@@ -25,7 +24,6 @@ def startParse(postId, url):
 
 # 爬主文
 def parseArticle(postId, url, soup):
-    print("主文 : ", url)
     article = Entity()  # 資料封裝
 
     ### 取得留言json ###
@@ -39,7 +37,7 @@ def parseArticle(postId, url, soup):
     article.likescnt = likeViews['count']
     article.dislikescnt = 0
     article.replycnt = commentViews['count']
-    article.pageUrl = parse.urlparse(url).path
+    article.pageUrl = url
     article.postTitle = soup.select_one("h2", {"class": "news-title"}).text.strip()
     try:
         article.authorName = soup.select("dd.name")[0].text.strip()
@@ -54,6 +52,8 @@ def parseArticle(postId, url, soup):
         article.content = article.content + str(p.text + "\t \n")
     article.postId = postId
     article.site = site
+    article.rid = article.postId
+    article.pid = ""
     outqueue.put(article.toList())
 
     parseComments(article)  # 解析留言 param 需傳入主文物件
@@ -76,6 +76,10 @@ def parseReply(comment):
         reply.content = repData['contents'][0]['extData']['content']
         reply.postId = comment.postId + "_" + str(i+1)
         reply.site = site
+
+        reply.rid = reply.parent.postId
+        reply.pid = reply.parent.parent.postId
+
         reply.likescnt = 0
         reply.dislikescnt = 0
         reply.replycnt = 0
@@ -102,6 +106,9 @@ def parseComments(article):
         comment.site = site
         comment.postId = article.postId + "_" + str(i+1)
 
+        comment.rid = comment.parent.postId
+        comment.pid = comment.parent.postId
+
         comment.likescnt = extarctLikeCnt(comtData['ext']['likeCount'])
         comment.dislikescnt = extarctDislikeCnt(comtData['ext']['likeCount'])
 
@@ -122,11 +129,11 @@ def generateArticleCommonsAPI(postId, commentsAmount="0", categoryId=None):
 
 def msTransToDate(param):
     ms = param
-    datetime.datetime.fromtimestamp(ms/1000.0)
+    return datetime.datetime.fromtimestamp(ms/1000.0).__str__()
 
 
 def extarctDate(date_str):
-    return datetime.datetime.strptime(date_str[5:], "%Y年%m月%d日%H:%M")
+    return datetime.datetime.strptime(date_str[5:], "%Y年%m月%d日%H:%M").__str__()
 
 class Entity(object):
     def __init__(self):
@@ -141,6 +148,8 @@ class Entity(object):
         newRecord.append(self.content)
         newRecord.append(self.postId)
         newRecord.append(self.site)
+        newRecord.append(self.rid)
+        newRecord.append(self.pid)
         newRecord.append(self.likescnt)
         newRecord.append(self.dislikescnt)
         newRecord.append(self.replycnt)
