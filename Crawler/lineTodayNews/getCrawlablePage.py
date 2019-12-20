@@ -40,7 +40,10 @@ def startCraw():
     soup = BeautifulSoup(resp.text, features="html.parser")
     digestTagsElems = soup.findAll("div", {"class": "digest-module"})
     operationTagsElems = soup.findAll("div", {"class": "operation-module"})
-    parseDigestModule(digestTagsElems)  # 熱區
+    try:
+        parseDigestModule(digestTagsElems)  # 熱區
+    except Exception:
+        print("熱區爬取失敗 : ", frontPage)
     parseOperationModule(operationTagsElems)  # 話題
 
 ###### tools #######
