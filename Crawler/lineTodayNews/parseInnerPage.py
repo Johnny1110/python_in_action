@@ -1,8 +1,11 @@
+import urllib
 from queue import Queue, Empty
 
 import getCrawlablePage
 import requests
 import json
+import urllib.parse as parse
+
 from bs4 import BeautifulSoup
 import datetime
 
@@ -72,7 +75,7 @@ def parseReply(comment):
         reply.pageUrl = comment.pageUrl
         reply.postTitle = comment.postTitle
         reply.authorName = repData['displayName']
-        reply.articleDate = repData['createdDate']
+        reply.articleDate = msTransToDate(repData['createdDate'])
         reply.content = repData['contents'][0]['extData']['content']
         reply.postId = comment.postId + "_" + str(i+1)
         reply.site = site
@@ -141,7 +144,7 @@ class Entity(object):
 
     def toList(self):
         newRecord = []
-        newRecord.append(self.pageUrl)
+        newRecord.append(parse.unquote(self.pageUrl))
         newRecord.append(self.postTitle)
         newRecord.append(self.authorName)
         newRecord.append(self.articleDate)
@@ -183,12 +186,6 @@ if __name__ == "__main__":
         try:
             record = inqueue.get(block=False)
             startParse(record[0], record[1], record[2])
-        except Empty as es:
-            break
-
-    while 1:
-        try:
-            print(outqueue.get(block=False))
         except Empty as es:
             break
 
