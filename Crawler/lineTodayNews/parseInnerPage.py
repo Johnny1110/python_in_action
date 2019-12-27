@@ -23,8 +23,7 @@ def startParse(classId, postId, url):
         print(url, "非正常文章，無法爬取")
 
 
-
-# 爬主文
+    # 爬主文
 def parseArticle(classId, postId, url, soup):
     article = Entity()  # 資料封裝
 
@@ -41,11 +40,11 @@ def parseArticle(classId, postId, url, soup):
     article.replycnt = commentViews['count']
     article.pageUrl = url
     article.postTitle = soup.select_one("h2", {"class": "news-title"}).text.strip()
+    article.authorName = " "
     try:
         article.authorName = soup.select("dd.name")[0].text.strip()
     except Exception:
         article.authorName = soup.select("dd.publisher")[0].text.strip()
-    article.authorName = " "
     article.articleDate = extarctDate(soup.select("dd.date")[0].text.strip())
     article.content = str()
     articleArea = soup.find("article", {"class": "article-content news-content"})  # 提出 article area
@@ -186,6 +185,12 @@ if __name__ == "__main__":
         try:
             record = inqueue.get(block=False)
             startParse(record[0], record[1], record[2])
+        except Empty as es:
+            break
+
+    while 1:
+        try:
+            print(outqueue.get(block=False))
         except Empty as es:
             break
 

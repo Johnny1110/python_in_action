@@ -49,7 +49,6 @@ def startCraw():
 ###### tools #######
 
 def cutClassId(url):
-    print("要解析的url -> ", url)
     result = str(url)[-url.index("/"):]
     return result
 
