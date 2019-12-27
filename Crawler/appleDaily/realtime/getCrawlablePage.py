@@ -12,7 +12,6 @@ def startCraw():
     pass
 
 
-
 ## 遞回爬取 Next Page
 def getCrawlableInnerPage(frontpage):
     print("正在掃描 : " + frontpage)
