@@ -16,8 +16,7 @@ def startCrawInnerPage(url):
 
 def extractDate(text):
     date = datetime.datetime.strptime(text, "%Y-%m-%d %H:%M")
-    pass
-
+    return date
 
 def parseEassyContext(url, text):
     entity = Entity()
@@ -39,7 +38,6 @@ def parseEassyContext(url, text):
 
 def parseEassyResponse(url, text, id_index=1):
     soup = BeautifulSoup(text, features="html.parser")
-
     for resp in soup.findAll("dd", {"class": "enabled"}):
         id_index += 1
         entity = Entity()
@@ -48,6 +46,7 @@ def parseEassyResponse(url, text, id_index=1):
         entity.set_id(url + '_' + str(id_index))
         entity.set_pid(url + '_1')
         entity.set_rid(url + '_1')
+        entity.set_url(url)
         entity.set_content(resp.select('div.comment')[0].text)
         entity.set_lang('zh_TW')
         date_str = resp.select('span.date')[0].text[4:].strip()
@@ -71,7 +70,6 @@ def parseHTML(url, text):
     # 解析回應
     parseEassyResponse(url, text)
 
-
 def generateEpriceUrl(halfUrl):
     return "https://www.eprice.com.tw" + halfUrl
 
@@ -80,7 +78,3 @@ if __name__ == '__main__':
     accessbleUrl = gup.crawlableInnerUrls
     print("所有可爬URL : ")
     print(accessbleUrl)
-
-    for url in accessbleUrl:
-        startCrawInnerPage(url)
-        print(dbData)

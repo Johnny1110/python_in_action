@@ -83,3 +83,10 @@ class Entity:
 
     def get_lang(self):
         return self.lang
+
+    def toList(self):
+        newRecord = []
+        newRecord.append(self.id)
+        newRecord.append(self.url)
+        newRecord.append(self.content)
+        newRecord.append(self.postDate)
