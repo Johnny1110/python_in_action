@@ -36,10 +36,9 @@
 
     *   地 1 個索引為 URL
 
-<br>
+    <br>
 
 2.  [parseInnerPage.py](./parseInnerPage.py)
-
 
     parseInnerPage 依賴於 getCrawlablePage 所提供的可爬取 URL queue。提出 queue 的每一筆紀錄再一一進行內文留言爬取。
 
