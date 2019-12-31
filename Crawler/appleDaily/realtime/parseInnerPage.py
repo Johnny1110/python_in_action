@@ -12,7 +12,7 @@ import getCrawlablePage
 import selenium.webdriver as driver
 
 outqueue = Queue()
-selenium_driver_path = "C:/Users/user/Desktop/workspace/python_kit/driver/chromedriver.exe"
+selenium_driver_path = "D:/lab/selenium_driver/chromedriver.exe"
 site = "test_site"
 
 def startParse(url):
@@ -79,7 +79,7 @@ def fillParentCommentDataToQueue(commentTag, article, index):
         comment.content = commentTag.find("span", {"class": "_5mdd"}).text ## 沒有 _5mdd 的話，回復就只是貼圖
     except Exception:
         comment.content = "圖片回復"
-    comment.articleDate = commentTag.find("abbr", {"class": "UFISutroCommentTimestamp livetimestamp"}).text
+    comment.articleDate = sTransToDate(commentTag.find("abbr", {"class": "UFISutroCommentTimestamp livetimestamp"}).get("data-utime"))
     comment.postId = toMD5("{}_{}".format(comment.url, index))
     comment.site = site
     comment.rid = article.postId
@@ -94,10 +94,17 @@ def fillChildCommentDataToQueue(childCommentTag, parent):
         for i in range(len(replys)):
             reply = Entity()
             reply.url = parent.url
-            reply.authorName = replys[i].find("a", {"class":"UFICommentActorName"})
+            reply.authorName = "???"
+            try:
+                reply.authorName = replys[i].find("a", {"class":"UFICommentActorName"}).text
+            except Exception:
+                reply.authorName = replys[i].find("span", {"class": "UFICommentActorName"}).text
             reply.postTitle = parent.postTitle
-            reply.content = replys[i].find("span", {"class":"_5mdd"})
-            reply.articleDate = replys[i].find("abbr", {"class": "UFISutroCommentTimestamp livetimestamp"}).text
+            try:
+                reply.content = replys[i].find("span", {"class":"_5mdd"}).text
+            except Exception:
+                reply.content = "圖片回復"
+            reply.articleDate = sTransToDate(replys[i].find("abbr", {"class": "UFISutroCommentTimestamp livetimestamp"}).get("data-utime"))
             reply.postId = toMD5("{}_{}_{}".format(reply.url, parent.index, i))
             reply.site = site
             reply.rid = parent.postId
@@ -124,8 +131,8 @@ class Entity(object):
         newRecord.append(self.pid)
         return newRecord
 
-def msTransToDate(param):
-    sec = int(param)
+def sTransToDate(param):
+    sec = int(param.strip())
     return datetime.datetime.fromtimestamp(sec).__str__()
 
 def toMD5(data):
@@ -138,8 +145,8 @@ def extractDate(dateStr): ## 出版時間：2019/12/30 12:33
     return datetime.datetime.strptime(dateStr[5:], "%Y/%m/%d %H:%M").__str__()
 
 def extractAuthor(appleContent):
-    author = re.search("（.*／.*報導）", appleContent)
-    return str(author) if author is not None else ""
+    author = re.search("（.{3,10}／.*報導）", appleContent)
+    return author.group() if author is not None else ""
 ########## tools ##########
 
 if __name__ == "__main__":
