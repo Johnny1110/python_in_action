@@ -13,6 +13,8 @@ import selenium.webdriver as driver
 
 outqueue = Queue()
 selenium_driver_path = "D:/lab/selenium_driver/chromedriver.exe"
+headless = driver.ChromeOptions()
+headless.add_argument('headless')
 site = "test_site"
 
 def startParse(url):
@@ -42,7 +44,7 @@ def parseArticle(url):
 
 
 def parseComments(article):
-    browser = driver.Chrome(executable_path=selenium_driver_path)
+    browser = driver.Chrome(executable_path=selenium_driver_path, options=headless)
     browser.get(article.url)
     fb_frame = browser.find_element_by_xpath('//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
     browser.switch_to.frame(fb_frame)
