@@ -1,34 +1,101 @@
 import datetime
 import hashlib
 import time
+
 import requests
 import re
-from queue import Queue, Empty
+import selenium.webdriver as driver
 
+from queue import Queue, Empty
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException
 
 import getCrawlablePage
-import selenium.webdriver as driver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 outqueue = Queue()
-selenium_driver_path = "D:/lab/selenium_driver/chromedriver.exe"
-headless = driver.ChromeOptions()
-headless.add_argument('headless')
+# selenium_driver_path = "D:/lab/selenium_driver/chromedriver.exe"
+selenium_driver_path = "D:/Mike_workshop/driver/geckodriver.exe"
+headless = driver.FirefoxOptions()
+headless.add_argument("-headless")
+headless.set_preference('permissions.default.image', 2)
 site = "test_site"
 
-def startParse(url):
-    article = parseArticle(url)
-    parseComments(article)
+
+def startParse(d, url):
+    print("正在解析 : ", url)
+    try:
+        # 解析正常格式文章
+        article = parseNormalArticle(url)
+        parseComments(article)
+    except Exception as e:
+        raise e
+        # 解析特殊格式文章
+        article = parseSpecialArticle(d, url)
+        parseComments(article)
 
 
 
-def parseArticle(url):
-    resp = requests.get(url)
-    resp.encoding = "utf-8"
-    soup = BeautifulSoup(resp.text, features="lxml")
+def parseSpecialArticle(d, url):
+    browser = driver.Firefox(executable_path=selenium_driver_path, options=headless)
+    browser.get(url)
+
+    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+    WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located(locator)
+    )
+
+    soup = BeautifulSoup(browser.page_source, features="lxml")
+    resultHeader = soup.find("div", {"class": "article__header"}).text
+    resultBody = soup.find("div", {"id": "article-body"}).text
     article = Entity()
     article.url = url
+    article.authorName = extractAuthor(resultBody)
+    article.postTitle = resultHeader
+    article.content = resultBody
+    article.articleDate = d
+    article.postId = toMD5(url)
+    article.site = site
+    article.rid = article.postId
+    article.pid = ""
+    outqueue.put(article.toList())
+
+    fb_frame = browser.find_element_by_xpath('//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+    browser.switch_to.frame(fb_frame)
+    locator = (By.CLASS_NAME, '_2pi8')
+    WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located(locator)
+    )
+
+    while 1:
+        try:
+            loadOtherBtn = browser.find_element_by_tag_name("button")  # load 按鈕
+            loadOtherBtn.click()
+            browser.implicitly_wait(3)
+        except NoSuchElementException:
+            break
+    commentSoup = BeautifulSoup(browser.page_source, features="lxml")
+    article.commentSoup = commentSoup
+    browser.close()
+    browser.quit()
+    return article
+
+
+def parseNormalArticle(url):
+    browser = driver.Firefox(executable_path=selenium_driver_path, options=headless)
+    browser.get(url)
+
+    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+    WebDriverWait(browser, 10).until(
+        EC.presence_of_element_located(locator)
+    )
+
+    soup = BeautifulSoup(browser.page_source, features="lxml")
+    article = Entity()
+    article.url = url
+
     article.authorName = extractAuthor(soup.find("div", {"class": "ndArticle_margin"}).p.text)
     article.postTitle = soup.find("hgroup").h1.text
     article.content = soup.find("div", {"class": "ndArticle_margin"}).p.text
@@ -39,16 +106,13 @@ def parseArticle(url):
     article.pid = ""
     outqueue.put(article.toList())
 
-    return article
-
-
-
-def parseComments(article):
-    browser = driver.Chrome(executable_path=selenium_driver_path, options=headless)
-    browser.get(article.url)
     fb_frame = browser.find_element_by_xpath('//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
     browser.switch_to.frame(fb_frame)
-    time.sleep(3)
+    locator = (By.CLASS_NAME, '_2pi8')
+    WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located(locator)
+    )
+
     while 1:
         try:
             loadOtherBtn = browser.find_element_by_tag_name("button")  # load 按鈕
@@ -56,14 +120,20 @@ def parseComments(article):
             browser.implicitly_wait(3)
         except NoSuchElementException:
             break
-    soup = BeautifulSoup(browser.page_source, features="lxml")
+    commentSoup = BeautifulSoup(browser.page_source, features="lxml")
+    article.commentSoup = commentSoup
     browser.close()
     browser.quit()
+    return article
+
+
+
+def parseComments(article):
+    soup = article.commentSoup
     commentsBlock = soup.findAll(class_="_3-8y _5nz1 clearfix")
     for i in range(len(commentsBlock)):
         parent = fillParentCommentDataToQueue(commentsBlock[i], article, i)
         fillChildCommentDataToQueue(commentsBlock[i].find("div", {"class": "_44ri _2pis"}), parent)
-
 
 
 def fillParentCommentDataToQueue(commentTag, article, index):
@@ -148,6 +218,8 @@ def extractDate(dateStr): ## 出版時間：2019/12/30 12:33
 
 def extractAuthor(appleContent):
     author = re.search("（.{3,10}／.*報導）", appleContent)
+    if author is None:
+        author = re.search("\(.{3,10}∕.*報導\)", appleContent)
     return author.group() if author is not None else ""
 ########## tools ##########
 
@@ -157,7 +229,15 @@ if __name__ == "__main__":
     while 1:
         try:
             url_list = inqueue.get(block=False)
-            for url in url_list:
-                startParse(url)
+            for li in url_list:
+                startParse(li[0], li[1])
+        except Empty:
+            break
+
+    while 1:
+        try:
+            out_list = outqueue.get(block=False)
+            for out in out_list:
+                print(out)
         except Empty:
             break
