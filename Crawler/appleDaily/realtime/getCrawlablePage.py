@@ -9,10 +9,10 @@ def extractCutoffDate(date_str):
     return date
 
 frontpage = "https://tw.news.appledaily.com/politics/realtime"
-txDate = extractCutoffDate("2020-01-03")
+txDate = extractCutoffDate("2020-01-04")
 outqueue = Queue()
 
-def startCraw():
+def startCraw(frontpage):
     getCrawlableInnerPage(frontpage)
     pass
 
@@ -81,7 +81,7 @@ def extractDate(date_str):
 ########## tools ##########
 
 if __name__ == "__main__":
-    startCraw()
+    startCraw(frontpage)
     while 1:
         try:
             print(outqueue.get(block=False))
