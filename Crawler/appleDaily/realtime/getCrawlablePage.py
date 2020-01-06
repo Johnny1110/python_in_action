@@ -9,7 +9,7 @@ def extractCutoffDate(date_str):
     return date
 
 frontpage = "https://tw.news.appledaily.com/politics/realtime"
-txDate = extractCutoffDate("2020-01-04")
+txDate = extractCutoffDate("2020-01-06")
 outqueue = Queue()
 
 def startCraw(frontpage):
@@ -30,7 +30,8 @@ def getCrawlableInnerPage(frontpage):
     for d, urls in news_list:
         if d >= txDate:
             for u in urls:
-                newRecord.append([str(d), u])
+                newRecord.append(str(d))
+                newRecord.append(u)
         else:
             keepGo = False
             break

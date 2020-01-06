@@ -1,8 +1,5 @@
 import datetime
 import hashlib
-import time
-
-import requests
 import re
 import selenium.webdriver as driver
 
@@ -17,7 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 outqueue = Queue()
-selenium_driver_path = "D:\lab\selenium_driver\geckodriver.exe"
+selenium_driver_path = "geckodriver"   #  ./cfg/geckodriver
 headless = driver.FirefoxOptions()
 headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
@@ -26,15 +23,10 @@ site = "test_site"
 
 def startParse(d, url):
     print("正在解析 : ", url)
-    try:
-        # 解析正常格式文章
-        article = parseNormalArticle(d, url)
-        parseComments(article)
-    except Exception as e:
-        # 解析特殊格式文章
-        print("特別版，進入特殊解析模式..")
-        article = parseSpecialArticle(d, url)
-        parseComments(article)
+    # 解析正常格式文章
+    article = parseNormalArticle(d, url)
+    parseComments(article)
+
 
 
 def collectFBCommentsToArticle(article, browser):
@@ -82,11 +74,11 @@ def parseNormalArticle(d, url):
         outqueue.put(article.toList())
 
         collectFBCommentsToArticle(article, browser)
-        browser.close()
-        browser.quit()
     except Exception as e:
         article = parseSpecialArticle(d, url, browser)
     finally:
+        browser.close()
+        browser.quit()
         return article
 
 
@@ -97,7 +89,7 @@ def parseSpecialArticle(d, url, browser):
     )
     soup = BeautifulSoup(browser.page_source, features="lxml")
     resultHeader = soup.find("div", {"class": "article__header"}).text
-    resultBody = soup.find("div", {"id": "article-body"}).text
+    resultBody = soup.find("div", {"id": "articleBody"}).text
     article = Entity()
     article.url = url
     article.authorName = extractAuthor(resultBody)
@@ -111,8 +103,6 @@ def parseSpecialArticle(d, url, browser):
     outqueue.put(article.toList())
 
     collectFBCommentsToArticle(article, browser)
-    browser.close()
-    browser.quit()
     return article
 
 def parseComments(article):
