@@ -23,10 +23,11 @@ site = "test_site"
 
 def startParse(d, url):
     print("正在解析 : ", url)
-    # 解析正常格式文章
-    article = parseNormalArticle(d, url)
-    parseComments(article)
-
+    try:
+        article = parseNormalArticle(d, url)
+        parseComments(article)
+    except Exception as e:
+        print("網頁解析失敗，目標 url : ", url)
 
 
 def collectFBCommentsToArticle(article, browser):
