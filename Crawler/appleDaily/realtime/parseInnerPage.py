@@ -14,7 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 outqueue = Queue()
-selenium_driver_path = "geckodriver"   #  ./cfg/geckodriver
+selenium_driver_path = "D:\lab\selenium_driver\geckodriver.exe"   #  ./cfg/geckodriver
 headless = driver.FirefoxOptions()
 headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
@@ -28,6 +28,7 @@ def startParse(d, url):
         parseComments(article)
     except Exception as e:
         print("網頁解析失敗，目標 url : ", url)
+        raise e
 
 
 def collectFBCommentsToArticle(article, browser):

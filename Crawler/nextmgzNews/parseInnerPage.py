@@ -12,14 +12,12 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from Crawler.nextmgzNews import getCrawablePage
 
-driver_path = "D:\Mike_workshop\driver\geckodriver.exe"
+driver_path = "D:\lab\selenium_driver\geckodriver.exe"
 headless = driver.FirefoxOptions()
 headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
 outqueue = Queue()
 site = "test_site_id"
-
-
 
 
 
@@ -33,6 +31,8 @@ def startParse(url):
     soup = BeautifulSoup(browser.page_source, features="lxml")
     article = parseArticle(url, soup.find("article"))
     collectFBCommentsToArticle(article, browser)
+    browser.close()
+    browser.quit()
     parseComments(article)
 
 
@@ -50,6 +50,7 @@ def parseArticle(url, soup):
     article.postId = toMD5(url)
     article.rid = article.postId
     article.pid = ""
+    outqueue.put(article.toList())
     return article
 
 def parseComments(article):
@@ -159,7 +160,7 @@ def toMD5(data):
 
 def extractAuthor(content):  # ex:（撰文╱特約記者傅紀鋼　攝影╱蘇立坤）
     match = re.search("（撰文╱.+?）", content)
-    return match.group()
+    return match.group() if match is not None else "???"
 
 def extractArticleDate(date_str):
     date = datetime.datetime.strptime(date_str.strip(), "%Y年%m月%d日")
