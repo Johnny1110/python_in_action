@@ -6,8 +6,15 @@ headers = {
     "Content-Type": "application/json"
 }
 
+cookies = {
+
+}
+
 def addHeader(key, value):
     headers[key] = value
+
+def addCookie(key, value):
+    cookies[key] = value
 
 def loginWithUsername(username, password, url):
     data = {
@@ -15,7 +22,7 @@ def loginWithUsername(username, password, url):
         "password": password
     }
     postData = json.dumps(data)
-    resp = requests.post(url=url, data=postData, header=headers)
+    resp = requests.post(url=url, data=postData, header=headers, cookies=cookies)
     resp.encoding = 'utf-8'
     respData = json.load(resp.text)
     setToken(respData['tokenType'], respData['accessToken'])
@@ -32,7 +39,7 @@ def loginWithEmail(email, password, url):
         "password": password
     }
     postData = json.dumps(data)
-    resp = requests.post(url=url, data=postData, headers=headers)
+    resp = requests.post(url=url, data=postData, headers=headers, cookies=cookies)
     resp.encoding = 'utf-8'
     respData = json.loads(resp.text)
     setToken(respData['tokenType'], respData['accessToken'])
