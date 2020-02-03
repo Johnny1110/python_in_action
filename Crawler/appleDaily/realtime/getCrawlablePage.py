@@ -1,5 +1,6 @@
 import datetime
 from queue import Queue, Empty
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,13 +9,12 @@ def extractCutoffDate(date_str):
     date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
     return date
 
-frontpage = "https://tw.news.appledaily.com/politics/realtime"
-txDate = extractCutoffDate("2020-01-06")
+frontpage = "https://tw.finance.appledaily.com/realtime"
+txDate = extractCutoffDate("2020-02-01")
 outqueue = Queue()
 
 def startCraw(frontpage):
     getCrawlableInnerPage(frontpage)
-    pass
 
 
 ## 遞回爬取 Next Page
@@ -26,16 +26,16 @@ def getCrawlableInnerPage(frontpage):
     soup = BeautifulSoup(resp.text, features="lxml")
     catalog = soup.find(class_="abdominis rlby clearmen")
     news_list = bindingDateAndArticle(catalog)
-    newRecord = []
     for d, urls in news_list:
         if d >= txDate:
             for u in urls:
+                newRecord = []
                 newRecord.append(str(d))
                 newRecord.append(u)
+                outqueue.put(newRecord)
         else:
             keepGo = False
             break
-    outqueue.put(newRecord)
 
     if keepGo:
         nextPageUrl = getNextPageUrl(soup)
@@ -68,7 +68,8 @@ def bindingDateAndArticle(soup):
 ########## tools ##########
 
 def generateAppleDailyUrl(halfUrl):
-    return "https://tw.news.appledaily.com" + halfUrl
+    host = urlparse(frontpage)
+    return host.scheme + "://" + host.netloc + halfUrl
 
 def extractCutoffDate(date_str):
     date = datetime.datetime.strptime(date_str.strip(), "%Y-%m-%d")

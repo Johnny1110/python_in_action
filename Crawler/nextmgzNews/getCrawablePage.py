@@ -8,13 +8,13 @@ def extractCutoffDate(date_str):
     date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
     return date
 
-fontpage = "https://tw.nextmgz.com/breakingnews/latest"
 driver_path = "D:\Mike_workshop\driver\geckodriver.exe"
 headless = driver.FirefoxOptions()
-headless.add_argument("-headless")  # 無頭模式
+# headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
 outqueue = Queue()
 txDate = extractCutoffDate("2020-01-10")
+title_class = "107"  # 人物類
 
 
 def startParse(fontpage):
@@ -38,6 +38,7 @@ def startParse(fontpage):
 def extractCrawablePage(html):
     soup = BeautifulSoup(html, features="lxml")
     ul = soup.find_all("li")
+    print("len(ul)", len(ul))
     if len(ul) == 0:
         raise RuntimeError("CrawablePage 已爬完")
     for li in ul:
@@ -54,7 +55,7 @@ def generateAjaxScript(pageNum):
     script = '''
     var tags = '';
     $.ajax({
-        url:"/section/getNext/0/0/10/''' + pageNum + '''/20/?",
+        url:"/section/getNext/''' + title_class + '''/0/10/''' + pageNum + '''/20/?",
         cache:false,
         dataType:"html",
         async:false
@@ -79,7 +80,7 @@ def generateNextMgzNewsUrl(half_url):
 
 ###### tools ######
 if __name__ == '__main__':
-    startParse(fontpage)
+    startParse("/#")
     while True:
         try:
             url = outqueue.get(block=False)

@@ -26,14 +26,19 @@ site = "test_site_id"
 def startParse(url):
     browser = driver.Firefox(executable_path=driver_path)
     browser.get(url)
-    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
-    WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located(locator)
-    )
-    soup = BeautifulSoup(browser.page_source, features="lxml")
-    article = parseArticle(url, soup.find("article"))
-    collectFBCommentsToArticle(article, browser)
-    parseComments(article)
+    try:
+        locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+        WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located(locator)
+        )
+        soup = BeautifulSoup(browser.page_source, features="lxml")
+        article = parseArticle(url, soup.find("article"))
+        collectFBCommentsToArticle(article, browser)
+        browser.close()
+        browser.quit()
+        parseComments(article)
+    except Exception as ex:
+        print("網頁解析失敗 : ", url)
 
 
 def parseArticle(url, soup):
@@ -50,6 +55,7 @@ def parseArticle(url, soup):
     article.postId = toMD5(url)
     article.rid = article.postId
     article.pid = ""
+    outqueue.put(article.toList())
     return article
 
 def parseComments(article):
@@ -158,8 +164,8 @@ def toMD5(data):
 
 
 def extractAuthor(content):  # ex:（撰文╱特約記者傅紀鋼　攝影╱蘇立坤）
-    match = re.search("（撰文╱.+?）", content)
-    return match.group()
+    match = re.search("（撰文.+?）", content)
+    return match.group() if match is not None else "?"
 
 def extractArticleDate(date_str):
     date = datetime.datetime.strptime(date_str.strip(), "%Y年%m月%d日")
@@ -167,12 +173,21 @@ def extractArticleDate(date_str):
 ####################
 
 if __name__ == '__main__':
-    fontpage = "https://tw.nextmgz.com/breakingnews/latest"
+    fontpage = "https://tw.nextmgz.com/breakingnews/news"
     urlqueue = getCrawablePage.outqueue
     getCrawablePage.startParse(fontpage)
     while True:
         try:
             url = urlqueue.get(block=False)
             startParse(url)
+        except Exception as ex:
+            break
+
+    while True:
+        try:
+            data = outqueue.get(block=False)
+            for item in data:
+                print(item)
+                print("---"*20)
         except Exception:
             break

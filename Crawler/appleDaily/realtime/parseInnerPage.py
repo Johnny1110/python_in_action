@@ -14,7 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 outqueue = Queue()
-selenium_driver_path = "geckodriver"   #  ./cfg/geckodriver
+selenium_driver_path = "D:\Mike_workshop\driver\geckodriver.exe"   #  ./cfg/geckodriver
 headless = driver.FirefoxOptions()
 headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
@@ -26,7 +26,7 @@ def startParse(d, url):
     try:
         article = parseNormalArticle(d, url)
         parseComments(article)
-    except Exception as e:
+    except Exception as ex:
         print("網頁解析失敗，目標 url : ", url)
 
 
@@ -76,6 +76,7 @@ def parseNormalArticle(d, url):
 
         collectFBCommentsToArticle(article, browser)
     except Exception as e:
+        print("非正常頁面，使用特殊格式解析.")
         article = parseSpecialArticle(d, url, browser)
     finally:
         browser.close()
@@ -84,27 +85,31 @@ def parseNormalArticle(d, url):
 
 
 def parseSpecialArticle(d, url, browser):
-    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
-    WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located(locator)
-    )
-    soup = BeautifulSoup(browser.page_source, features="lxml")
-    resultHeader = soup.find("div", {"class": "article__header"}).text
-    resultBody = soup.find("div", {"id": "articleBody"}).text
-    article = Entity()
-    article.url = url
-    article.authorName = extractAuthor(resultBody)
-    article.postTitle = resultHeader
-    article.content = resultBody
-    article.articleDate = d
-    article.postId = toMD5(url)
-    article.site = site
-    article.rid = article.postId
-    article.pid = ""
-    outqueue.put(article.toList())
+    try:
+        locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+        WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located(locator)
+        )
+        soup = BeautifulSoup(browser.page_source, features="lxml")
+        resultHeader = soup.find("div", {"class": "article__header"}).text
+        resultBody = soup.find("div", {"id": "articleBody"}).text
+        article = Entity()
+        article.url = url
+        article.authorName = extractAuthor(resultBody)
+        article.postTitle = resultHeader
+        article.content = resultBody
+        article.articleDate = d
+        article.postId = toMD5(url)
+        article.site = site
+        article.rid = article.postId
+        article.pid = ""
+        outqueue.put(article.toList())
 
-    collectFBCommentsToArticle(article, browser)
-    return article
+        collectFBCommentsToArticle(article, browser)
+        return article
+    except Exception as ex:
+        print("特殊格式解析失敗.")
+
 
 def parseComments(article):
     soup = article.commentSoup
