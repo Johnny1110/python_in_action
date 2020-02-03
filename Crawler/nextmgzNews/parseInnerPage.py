@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from Crawler.nextmgzNews import getCrawablePage
 
-driver_path = "D:\Mike_workshop\driver\geckodriver.exe"
+driver_path = "D:\lab\selenium_driver\geckodriver.exe"
 headless = driver.FirefoxOptions()
 headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
@@ -21,11 +21,10 @@ site = "test_site_id"
 
 
 
-
-
 def startParse(url):
     browser = driver.Firefox(executable_path=driver_path)
     browser.get(url)
+<<<<<<< HEAD
     try:
         locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
         WebDriverWait(browser, 20).until(
@@ -39,6 +38,18 @@ def startParse(url):
         parseComments(article)
     except Exception as ex:
         print("網頁解析失敗 : ", url)
+=======
+    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
+    WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located(locator)
+    )
+    soup = BeautifulSoup(browser.page_source, features="lxml")
+    article = parseArticle(url, soup.find("article"))
+    collectFBCommentsToArticle(article, browser)
+    browser.close()
+    browser.quit()
+    parseComments(article)
+>>>>>>> 99e9075598cdb6c859e49107be4857754aef5113
 
 
 def parseArticle(url, soup):
@@ -164,8 +175,13 @@ def toMD5(data):
 
 
 def extractAuthor(content):  # ex:（撰文╱特約記者傅紀鋼　攝影╱蘇立坤）
+<<<<<<< HEAD
     match = re.search("（撰文.+?）", content)
     return match.group() if match is not None else "?"
+=======
+    match = re.search("（撰文╱.+?）", content)
+    return match.group() if match is not None else "???"
+>>>>>>> 99e9075598cdb6c859e49107be4857754aef5113
 
 def extractArticleDate(date_str):
     date = datetime.datetime.strptime(date_str.strip(), "%Y年%m月%d日")
