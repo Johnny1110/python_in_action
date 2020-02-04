@@ -28,7 +28,7 @@ def startParse(d, url):
         parseComments(article)
     except Exception as ex:
         print("網頁解析失敗，目標 url : ", url)
-        raise e
+
 
 
 def collectFBCommentsToArticle(article, browser):

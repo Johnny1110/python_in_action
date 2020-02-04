@@ -23,6 +23,10 @@
     *   [爬取 LineToday 上任何類別的新聞與留言](Crawler/lineTodayNews)
     
     *   [爬取 Apple Daily 上的可見資訊及留言](Crawler/appleDaily)
+
+    *   [爬取壹週刊上的可見資訊及留言](Crawler/nextmgzNews)
+
+    *   [爬取風傳媒上的可見資訊及留言](Crawler/storm)
     
 <br>
 
