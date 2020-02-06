@@ -1,6 +1,8 @@
 import datetime
 import hashlib
 import re
+import time
+
 import selenium.webdriver as driver
 
 from queue import Queue, Empty
@@ -23,11 +25,18 @@ site = "test_site"
 
 def startParse(d, url):
     print("正在解析 : ", url)
+    article = None
     try:
         article = parseNormalArticle(d, url)
-        parseComments(article)
     except Exception as ex:
         print("網頁解析失敗，目標 url : ", url)
+
+    try:
+        parseComments(article)
+    except Exception as ex:
+        print("Comments 解析失敗，目標 url : ", url)
+
+
 
 
 
@@ -56,7 +65,7 @@ def collectFBCommentsToArticle(article, browser):
 
 def parseNormalArticle(d, url):
     article = Entity()
-    browser = driver.Firefox(executable_path=selenium_driver_path, options=None)
+    browser = driver.Firefox(executable_path=selenium_driver_path, options=headless)
     browser.get(url)
     try:
         locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
@@ -74,7 +83,7 @@ def parseNormalArticle(d, url):
         article.rid = article.postId
         article.pid = ""
         outqueue.put(article.toList())
-
+        time.sleep(5)
         collectFBCommentsToArticle(article, browser)
     except Exception as e:
         print("非正常頁面，使用特殊格式解析.")
@@ -86,15 +95,13 @@ def parseNormalArticle(d, url):
 
 
 def parseSpecialArticle(d, url, browser):
+    browser.refresh()
+    article = Entity()
     try:
-        locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
-        WebDriverWait(browser, 20).until(
-            EC.presence_of_element_located(locator)
-        )
         soup = BeautifulSoup(browser.page_source, features="lxml")
         resultHeader = soup.find("div", {"class": "article__header"}).text
         resultBody = soup.find("div", {"id": "articleBody"}).text
-        article = Entity()
+
         article.url = url
         article.authorName = extractAuthor(resultBody)
         article.postTitle = resultHeader
@@ -104,12 +111,17 @@ def parseSpecialArticle(d, url, browser):
         article.site = site
         article.rid = article.postId
         article.pid = ""
-        outqueue.put(article.toList())
-
-        collectFBCommentsToArticle(article, browser)
-        return article
+        newRecord = article.toList()
+        outqueue.put(newRecord)
     except Exception as ex:
         print("特殊格式解析失敗.")
+
+    try:
+        collectFBCommentsToArticle(article, browser)
+    except Exception as ex:
+        print("FBComments 解析失敗.")
+
+    return article
 
 
 def parseComments(article):
