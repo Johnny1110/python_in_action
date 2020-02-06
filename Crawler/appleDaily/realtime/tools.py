@@ -29,12 +29,18 @@ def toMD5(data):
     m.update(data.encode("utf-8"))
     return m.hexdigest()
 
+def excludeIframeCode(content):
+    soup = BeautifulSoup(content, features="lxml")
+    return soup.text.strip()
+
 def extractPostDate(date_str):
-    return parse(date_str)
+    data = parse(date_str)
+    data = data.replace(microsecond=0, tzinfo=None)
+    return data.__str__()
 
 def extractAuthor(appleContent):
     author = re.search("[（(].{1,10}／.*報導[)）]", appleContent)
-    return author.group() if author is not None else ""
+    return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
 
 class Entity:
@@ -127,5 +133,6 @@ class Entity:
         return newRecord
 
 if __name__ == '__main__':
-    data = extractPostDate("2020-02-04T02:55:07.812Z")
-    print(data)
+    file = open("./index.html", encoding="utf-8")
+    data = file.read()
+    excludeIframeCode(data)
