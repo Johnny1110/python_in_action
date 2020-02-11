@@ -5,9 +5,7 @@ import requests
 import selenium.webdriver as driver
 from bs4 import BeautifulSoup
 
-def extractCutoffDate(date_str):
-    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-    return date
+from Crawler.nextmgzNews.tools import *
 
 driver_path = "D:\Mike_workshop\driver\geckodriver.exe"
 headless = driver.FirefoxOptions()

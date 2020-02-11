@@ -14,6 +14,8 @@ def startParse(url):
     resp.encoding = 'utf-8'
     soup = BeautifulSoup(resp.text, features="lxml")
     article = parseArticle(url, soup.find("div", class_="page_wrapper"))
+    return article
+
 
 
 def parseArticle(url, contentSoup):
@@ -26,7 +28,7 @@ def parseArticle(url, contentSoup):
     article.postId = toMD5(url)
     article.rid = article.postId
     outqueue.put(article.toList())
-    print(article.toList())
+    return article
 
 
 if __name__ == '__main__':
@@ -47,9 +49,6 @@ if __name__ == '__main__':
                 print(item)
         except Exception:
             break
-
-    browser.close()
-    browser.quit()
 
 
 

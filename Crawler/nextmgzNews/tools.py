@@ -8,6 +8,9 @@ def sTransToDate(param):
     sec = int(param.strip())
     return datetime.datetime.fromtimestamp(sec).__str__()
 
+def extractCutoffDate(date_str):
+    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    return date
 
 def toMD5(data):
     m = hashlib.md5()
