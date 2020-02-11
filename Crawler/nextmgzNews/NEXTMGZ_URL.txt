@@ -1,0 +1,14 @@
+﻿NEWS_壹週刊_壹點就報;https://tw.nextmgz.com/breakingnews/1clock;306
+NEWS_壹週刊_推薦;https://tw.nextmgz.com/breakingnews/topic;117
+NEWS_壹週刊_要聞;https://tw.nextmgz.com/breakingnews/headline;320
+NEWS_壹週刊_社會;https://tw.nextmgz.com/breakingnews/news;107
+NEWS_壹週刊_娛樂;https://tw.nextmgz.com/breakingnews/entertainment;109
+NEWS_壹週刊_人物;https://tw.nextmgz.com/breakingnews/people;113
+NEWS_壹週刊_網紅;https://tw.nextmgz.com/breakingnews/kol;326
+NEWS_壹週刊_美妝保養;https://tw.nextmgz.com/breakingnews/beauty;318
+NEWS_壹週刊_生活;https://tw.nextmgz.com/breakingnews/life;115
+NEWS_壹週刊_科技;https://tw.nextmgz.com/breakingnews/technology;118
+NEWS_壹週刊_時尚;https://tw.nextmgz.com/breakingnews/fashion;110
+NEWS_壹週刊_美食旅遊;https://tw.nextmgz.com/breakingnews/eatandtravel;114
+NEWS_壹週刊_經典檔案;https://tw.nextmgz.com/breakingnews/classic;308
+NEWS_壹週刊_專欄;https://tw.nextmgz.com/breakingnews/forum;116

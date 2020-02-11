@@ -1,6 +1,7 @@
 import datetime
 from queue import Queue
 
+import requests
 import selenium.webdriver as driver
 from bs4 import BeautifulSoup
 
@@ -13,17 +14,33 @@ headless = driver.FirefoxOptions()
 # headless.add_argument("-headless")  # 無頭模式
 headless.set_preference('permissions.default.image', 2)
 outqueue = Queue()
-txDate = extractCutoffDate("2020-01-10")
-title_class = "107"  # 人物類
+txDate = extractCutoffDate("2020-01-30")
+title_class = "115"  # 生活類
 
 
-def startParse(fontpage):
+def startParse(frontpage):
+    resp = requests.get(frontpage)
+    resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, features='lxml')
+    loadMoreBtn = soup.find("div", class_="load-more noselect")
+    if loadMoreBtn is not None:
+        startParseLoadMore(frontpage)
+        return
+
+    item_list = soup.find("section", class_="list list-main")
+    try:
+        extractCrawablePage(str(item_list))
+    except Exception as e:
+        return
+
+
+
+def startParseLoadMore(url):
     browser = driver.Firefox(executable_path=driver_path, options=headless)
-    browser.get(fontpage)
+    browser.get(url)
     pageNum = -1  # 起始頁是 -1
     while True:
         try:
-            print("解析 pageNum : ", pageNum)
             script = generateAjaxScript(pageNum)
             html = browser.execute_script(script)
             extractCrawablePage(html)
@@ -38,10 +55,11 @@ def startParse(fontpage):
 def extractCrawablePage(html):
     soup = BeautifulSoup(html, features="lxml")
     ul = soup.find_all("li")
-    print("len(ul)", len(ul))
     if len(ul) == 0:
         raise RuntimeError("CrawablePage 已爬完")
     for li in ul:
+        if li.get("aid") is None:
+            continue
         date = extractArticleDate(li.find("time").text)
         if txDate <= date:
             outqueue.put(generateNextMgzNewsUrl(li.a.get("href")))
