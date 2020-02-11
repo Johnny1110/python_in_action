@@ -1,12 +1,7 @@
 from queue import Queue
 
-import selenium.webdriver as driver
+import requests
 from bs4 import BeautifulSoup
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 from Crawler.storm.GetCrawablePage import outqueue as url_queue, startCraw
 from Crawler.storm.tools import Entity, extractPostDate, toMD5
@@ -14,23 +9,10 @@ from Crawler.storm.tools import Entity, extractPostDate, toMD5
 site = "test_site_id"
 outqueue = Queue()
 
-driver_path = "D:\Mike_workshop\driver\geckodriver.exe"
-headless = driver.FirefoxOptions()
-# headless.add_argument("-headless")  # 無頭模式
-headless.set_preference('permissions.default.image', 2)
-browser = driver.Firefox(executable_path=driver_path, options=headless)
-
-
-
-
-
 def startParse(url):
-    browser.get(url)
-    locator = (By.XPATH, '//iframe[contains(@title, "fb:comments Facebook Social Plugin")]')
-    WebDriverWait(browser, 30).until(
-        EC.presence_of_element_located(locator)
-    )
-    soup = BeautifulSoup(browser.page_source, features="lxml")
+    resp = requests.get(url)
+    resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, features="lxml")
     article = parseArticle(url, soup.find("div", class_="page_wrapper"))
 
 
@@ -44,6 +26,7 @@ def parseArticle(url, contentSoup):
     article.postId = toMD5(url)
     article.rid = article.postId
     outqueue.put(article.toList())
+    print(article.toList())
 
 
 if __name__ == '__main__':

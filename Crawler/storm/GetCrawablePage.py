@@ -16,7 +16,6 @@ def startCraw():
 
 def fillCrawableUrl(page):
     keepGo = True
-    urlList = []
     resp = requests.get(page)
     resp.encoding = "utf-8"
     soup = BeautifulSoup(resp.text, features="lxml")
@@ -26,13 +25,10 @@ def fillCrawableUrl(page):
         postDate = extractPostDate(date_str.text)
         if postDate > txDate:
             url = it.find("a", class_="card_link link_img").get("href")
-            urlList.append(url)
+            outqueue.put(url)
         else:
             keepGo = False  # 停止往下一頁遞回
             break  # 離開此頁 items
-
-    if len(urlList) > 0:
-        outqueue.put(urlList)
 
     pageBar = soup.find("div", class_="pages_wrapper pagination_content")
     nextPageUrl = getNextPage(pageBar)
@@ -54,8 +50,8 @@ if __name__ == '__main__':
     startCraw()
     while True:
         try:
-            urls = outqueue.get(block=False)
-            print(urls)
+            url = outqueue.get(block=False)
+            print(url)
         except Exception as ex:
             break
 
