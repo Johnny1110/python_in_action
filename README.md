@@ -26,7 +26,9 @@
 
     *   [爬取壹週刊上的可見資訊及留言](Crawler/nextmgzNews)
 
-    *   [爬取風傳媒上的可見資訊及留言](Crawler/storm)
+    *   [爬取風傳媒上的可見資訊](Crawler/storm)
+
+    *   [爬取天下雜誌上的可見資訊](Crawler/commonWealth)
     
 <br>
 
