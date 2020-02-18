@@ -31,6 +31,8 @@
     *   [爬取天下雜誌上的可見資訊](Crawler/commonWealth)
 
     *   [爬取焦點事件上的可見資訊](Crawler/esFocus)
+
+    *   [爬取遠見雜誌上的可見資訊](Crawler/gvm)
     
 <br>
 
