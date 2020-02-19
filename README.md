@@ -33,6 +33,8 @@
     *   [爬取焦點事件上的可見資訊](Crawler/esFocus)
 
     *   [爬取遠見雜誌上的可見資訊](Crawler/gvm)
+
+    *   [爬取今周刊上的可見資訊](Crawler/businessToday)
     
 <br>
 
