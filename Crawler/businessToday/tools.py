@@ -138,6 +138,4 @@ class Entity:
         newRecord.append(self.__rid)
         newRecord.append(self.pid)  # pid
         return newRecord
-
-if __name__ == '__main__':
-    pass
+        # return pys.recordToByte(newRecord)  # Trinity 使用

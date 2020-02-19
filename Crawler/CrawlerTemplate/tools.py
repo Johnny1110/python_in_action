@@ -29,6 +29,10 @@ def extractAuthorName(content_str):
     author = re.search(".*?", content_str)
     return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
+def urlToByteList(url):
+    newRecord = []
+    newRecord.append(url)
+    return pys.recordToByte(newRecord)
 
 class PreCrawlerProcessor:
     @abstractmethod
@@ -135,6 +139,7 @@ class Entity:
         newRecord.append(self.__rid)
         newRecord.append(self.pid)  # pid
         return newRecord
+        # return pys.recordToByte(newRecord)  # Trinity 使用
 
 if __name__ == '__main__':
     pass
