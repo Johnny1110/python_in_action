@@ -3,7 +3,6 @@ import hashlib
 import re
 from abc import abstractmethod
 from bs4 import BeautifulSoup
-from dateutil.parser import parse
 
 site = '${SITENAME}'
 
@@ -12,12 +11,18 @@ def toMD5(data):
     m.update(data.encode("utf-8"))
     return m.hexdigest()
 
-def generateDate(date_str):
-    return parse(date_str).replace(microsecond=0, tzinfo=None)
+def generateTxDate(date_str):
+    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    return date
 
 # define
-def generateBTUrl(target):
-    return "https://#" + target
+def extractPostDate(date_str):
+    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    return date
+
+# define
+def generateFormosaUrl(target):
+    return "http://www.my-formosa.com/" + target
 
 # define
 def extractAuthorName(content_str):
@@ -50,7 +55,6 @@ class Entity:
         self.__content = ""
         self.__site = site
         self.__parent = None
-        self.__attr = {}
 
     @property
     def parent(self):
@@ -59,8 +63,6 @@ class Entity:
     @parent.setter
     def parent(self, entity):
         self.__parent = entity
-        self.url = entity.url
-        self.title = entity.title
 
     @property
     def url(self) -> str:
@@ -124,12 +126,6 @@ class Entity:
             return self.__parent.postId
         else:
             return ""
-
-    def getAttr(self, key):
-        return self.__attr[key]
-
-    def setAttr(self, key, value):
-        self.__attr.update({key: value})
 
     def toList(self):
         newRecord = []

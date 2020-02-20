@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 frontPage = "#"
-txDate = generateTxDate("2020-02-01")
+txDate = generateDate("2020-02-01")
 
 # 實作 fillDataToQueue() 與 getNextPage() 就可以了。
 class Processor(PreCrawlerProcessor):

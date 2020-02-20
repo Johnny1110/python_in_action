@@ -2,10 +2,17 @@ import datetime
 import hashlib
 import re
 from abc import abstractmethod
+
+import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
 site = '${SITENAME}'
+
+# 使用 Tor Proxy 要安裝 pysocksg
+session = requests.session()
+session.proxies['http'] = 'socks5h://localhost:9150'
+session.proxies['https'] = 'socks5h://localhost:9150'
 
 def toMD5(data):
     m = hashlib.md5()
@@ -15,9 +22,12 @@ def toMD5(data):
 def generateDate(date_str):
     return parse(date_str).replace(microsecond=0, tzinfo=None)
 
+def extractArticleDate(date_str):
+    return datetime.datetime.strptime(date_str, "%Y-%m-%d")
+
 # define
-def generateBTUrl(target):
-    return "https://#" + target
+def generateDcardUrl(siteClass, id):
+    return "https://www.dcard.tw/f/{}/p/{}".format(siteClass, id)
 
 # define
 def extractAuthorName(content_str):
@@ -25,9 +35,12 @@ def extractAuthorName(content_str):
     return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
 def urlToByteList(url):
-    newRecord = []
-    newRecord.append(url)
-    return pys.recordToByte(newRecord)
+    try:
+        newRecord = []
+        newRecord.append(url)
+        return pys.recordToByte(newRecord)
+    except Exception:
+        return url
 
 class PreCrawlerProcessor:
     @abstractmethod
@@ -144,6 +157,3 @@ class Entity:
         newRecord.append(self.pid)  # pid
         return newRecord
         # return pys.recordToByte(newRecord)  # Trinity 使用
-
-if __name__ == '__main__':
-    pass

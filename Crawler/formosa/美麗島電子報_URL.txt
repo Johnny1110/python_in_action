@@ -1,0 +1,6 @@
+美麗島電子報_政治;http://www.my-formosa.com/KM/M_5.htm
+美麗島電子報_兩岸;http://www.my-formosa.com/KM/M_6.htm
+美麗島電子報_國際;http://www.my-formosa.com/KM/M_8.htm
+美麗島電子報_財經;http://www.my-formosa.com/KM/M_10.htm
+美麗島電子報_生活;http://www.my-formosa.com/KM/M_12.htm
+美麗島電子報_健康;http://www.my-formosa.com/KM/M_19.htm
