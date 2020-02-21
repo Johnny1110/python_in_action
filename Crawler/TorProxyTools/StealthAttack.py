@@ -21,7 +21,7 @@ def switchIP(waiting=8):
             controller.authenticate()
             controller.signal(Signal.NEWNYM)
             break
-        sleep(waiting)  # 不知道什麼時間能換完，等 8 秒。
+        sleep(waiting)  # 不知道什麼時間能換完，等 `waiting` 秒。
 
 def sendRequests(url):
     session = requests.session()
@@ -32,6 +32,6 @@ def sendRequests(url):
 
 if __name__ == '__main__':
     url = 'http://httpbin.org/ip'
-    for i in range(5):
+    while True:
         sendRequests(url)
-        switchIP(waiting=5)
+        switchIP(waiting=6)

@@ -47,3 +47,9 @@
 2. API 測試工具
 
     *   [自己寫的 Restful API 服務測試工具](./Poster/myPoster/README.md)
+
+<br>
+
+3. Python 小試
+
+    *   [Python 自訂 print( )](./TODO/defPrint/print.py)

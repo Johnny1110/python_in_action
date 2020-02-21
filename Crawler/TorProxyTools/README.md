@@ -61,6 +61,12 @@
         vim /usr/local/etc/torrc
         ```
 
+        如果以上沒有找到相應 torrc 文件的話，請嘗試看看以下做法 :
+
+        ```bash
+        vim /etc/tor/torrc
+        ```
+
         進入 torrc 後取消以下兩行註解 :
 
         ```bash
