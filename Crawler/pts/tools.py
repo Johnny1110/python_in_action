@@ -2,22 +2,38 @@ import datetime
 import hashlib
 import re
 from abc import abstractmethod
+
+import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
 site = '${SITENAME}'
+
+def getTitlesUrl(url):
+    resp = requests.get(url)
+    resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, features='lxml')
+    section = soup.find("section", class_="wrapper wrapper2")
+    href_list = section.findAll("div", class_="subtype-wapper")
+    url_list = []
+    for url in href_list:
+        url_list.append(url.a.get("href"))
+    return url_list
 
 def toMD5(data):
     m = hashlib.md5()
     m.update(data.encode("utf-8"))
     return m.hexdigest()
 
-def generateDate(date_str):
-    return parse(date_str).replace(microsecond=0, tzinfo=None)
+def generateDate(date_str, Chinese=False):
+    if Chinese:
+        return datetime.datetime.strptime(date_str, "%Y年%m月%d日")
+    else:
+        return parse(date_str).replace(microsecond=0, tzinfo=None)
 
 # define
-def generateBTUrl(target):
-    return "https://#" + target
+def generatePTSUrl(target):
+    return "https://news.pts.org.tw/article/" + target
 
 # define
 def extractAuthorName(content_str):
