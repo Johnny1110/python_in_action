@@ -28,15 +28,17 @@ def startParse(url):
         article.authorName = author_tag.a.getText()
         author_tag.a.decompose()
         article.articleDate = generateDate(author_tag.getText().strip(), Chinese=True)
-        article.content = main_tag.find("div", class_="editor").getText()
+        content = main_tag.find("div", class_="editor")
+        for p in content.findAll("p"):
+            article.content += p.getText().strip() + '\r\n'
         outqueue.put(article.toList())
         return article
-    except Exception:
+    except Exception as e:
         print("內文解析失敗 url: ", url)
 
 
 if __name__ == '__main__':
-    url = "https://www.upmedia.mg/news_info.php?SerialNo=81913"
+    url = "https://www.upmedia.mg/news_info.php?SerialNo=81598"
     article = startParse(url)
     for data in article.toList():
         print(data)
