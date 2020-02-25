@@ -1,0 +1,7 @@
+上報_調查;https://www.upmedia.mg/news_list.php?Type=1
+上報_評論;https://www.upmedia.mg/news_list.php?Type=2
+上報_國際;https://www.upmedia.mg/news_list.php?Type=3
+上報_焦點;https://www.upmedia.mg/news_list.php?Type=24
+上報_生活;https://www.upmedia.mg/news_list.php?Type=5
+上報_遊戲;https://www.upmedia.mg/news_list.php?Type=12
+上報_人物;https://www.upmedia.mg/news_list.php?Type=82
