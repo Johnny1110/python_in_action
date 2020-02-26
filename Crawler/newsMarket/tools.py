@@ -2,47 +2,22 @@ import datetime
 import hashlib
 import re
 from abc import abstractmethod
-import random
-from time import sleep
-
-import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
 site = '${SITENAME}'
-
-session = requests.session()
-proxies = {
-    'http': 'socks5h://localhost:9150',
-    'https': 'socks5h://localhost:9150',
-}
-session.proxies = proxies
-
-def dateStrFilter(date_str):
-    date_str = re.search(".{4}年.{2}月.{2}日 .{2}:.{2}[:]{0,1}.{0,2}", date_str)
-    return date_str.group()
-
-def randomSleep():
-    sec = random.randint(1, 3)
-    sleep(sec)
 
 def toMD5(data):
     m = hashlib.md5()
     m.update(data.encode("utf-8"))
     return m.hexdigest()
 
-def generateDate(date_str, Chinese=False):
-    if Chinese:
-        try:
-            return datetime.datetime.strptime(date_str, "%Y年%m月%d日 %H:%M")
-        except Exception:
-            return datetime.datetime.strptime(date_str, "%Y年%m月%d日 %H:%M:%S")
-    else:
-        return parse(date_str).replace(microsecond=0, tzinfo=None)
+def generateDate(date_str):
+    return parse(date_str).replace(microsecond=0, tzinfo=None)
 
 # define
-def generateUpUrl(target):
-    return "https://www.upmedia.mg/" + target
+def generateBTUrl(target):
+    return "https://#" + target
 
 # define
 def extractAuthorName(content_str):
@@ -68,9 +43,10 @@ class PreCrawlerProcessor:
 
     def start(self, frontPage):
         pagesBar = self.fillDataToQueue(frontPage)  # TxDate > PostDate : break，pagesBar = None
-        nextPageUrl = self.getNextPage(pagesBar)
-        if nextPageUrl is not None:
-            self.start(nextPageUrl)
+        if pagesBar is not None:
+            nextPageUrl = self.getNextPage(pagesBar)
+            if nextPageUrl is not None:
+                self.start(nextPageUrl)
 
 
 class Entity:
@@ -174,6 +150,4 @@ class Entity:
         # return pys.recordToByte(newRecord)  # Trinity 使用
 
 if __name__ == '__main__':
-    sss = "   a                             2020年02月06日 11:54:             "
-    date_str = dateStrFilter(sss)
-    print(date_str)
+    pass

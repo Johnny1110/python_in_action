@@ -1,6 +1,7 @@
 from queue import Queue
 
-from Crawler.upMedia.tools import generateDate, PreCrawlerProcessor, generateUpUrl, urlToByteList
+from Crawler.upMedia.tools import generateDate, PreCrawlerProcessor, generateUpUrl, urlToByteList, randomSleep, \
+    dateStrFilter
 
 outqueue = Queue()
 
@@ -20,6 +21,7 @@ headers = {
 # 實作 fillDataToQueue() 與 getNextPage() 就可以了。
 class Processor(PreCrawlerProcessor):
     def fillDataToQueue(self, url) -> BeautifulSoup:
+        randomSleep()
         resp = requests.get(url, headers=headers)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
@@ -28,7 +30,7 @@ class Processor(PreCrawlerProcessor):
         for item in items:
             try:
                 date_tag = item.find("div", class_="time")
-                postDate = generateDate(date_tag.getText().strip(), Chinese=True)
+                postDate = generateDate(dateStrFilter(date_tag.getText().strip()), Chinese=True)
                 if postDate >= txDate:
                     dd = date_tag.parent
                     for div in dd.findAll("div"):
@@ -42,7 +44,7 @@ class Processor(PreCrawlerProcessor):
             except Exception as e:
                 box = item.find("div", class_="author")
                 box.a.decompose()
-                postDate = generateDate(box.getText().strip(), Chinese=True)
+                postDate = generateDate(dateStrFilter(box.getText().strip()), Chinese=True)
                 if postDate >= txDate:
                     dd = box.parent
                     for div in dd.findAll("div"):

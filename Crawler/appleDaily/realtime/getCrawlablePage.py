@@ -9,7 +9,7 @@ def extractCutoffDate(date_str):
     date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
     return date
 
-frontpage = "https://tw.finance.appledaily.com/realtime"
+frontpage = "https://tw.appledaily.com/life/realtime"
 txDate = extractCutoffDate("2020-02-01")
 outqueue = Queue()
 

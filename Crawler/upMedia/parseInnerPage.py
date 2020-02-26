@@ -3,7 +3,8 @@ from queue import Queue
 import requests
 from bs4 import BeautifulSoup
 
-from Crawler.upMedia.tools import Entity, toMD5, generateDate
+from Crawler.upMedia.tools import Entity, toMD5, generateDate, randomSleep
+
 outqueue = Queue()
 
 headers = {
@@ -15,6 +16,7 @@ headers = {
 
 def startParse(url):
     try:
+        randomSleep()
         resp = requests.get(url, headers=headers)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')

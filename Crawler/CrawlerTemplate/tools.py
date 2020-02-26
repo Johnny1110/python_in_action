@@ -1,11 +1,27 @@
 import datetime
 import hashlib
 import re
+import requests
+
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
+
 site = '${SITENAME}'
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0',
+    'Accept': 'text/html,application/xhtml+xml,application/json;q=0.9,image/webp,*/*;q=0.8',
+}
+
+session = requests.session()
+proxies = {
+    'http': 'socks5h://localhost:9150',
+    'https': 'socks5h://localhost:9150',
+}
+session.proxies = proxies
+session.headers = headers
 
 def toMD5(data):
     m = hashlib.md5()
@@ -43,9 +59,10 @@ class PreCrawlerProcessor:
 
     def start(self, frontPage):
         pagesBar = self.fillDataToQueue(frontPage)  # TxDate > PostDate : break，pagesBar = None
-        nextPageUrl = self.getNextPage(pagesBar)
-        if nextPageUrl is not None:
-            self.start(nextPageUrl)
+        if pagesBar is not None:
+            nextPageUrl = self.getNextPage(pagesBar)
+            if nextPageUrl is not None:
+                self.start(nextPageUrl)
 
 
 class Entity:
@@ -145,8 +162,10 @@ class Entity:
         newRecord.append(self.__postId)
         newRecord.append(self.__rid)
         newRecord.append(self.pid)  # pid
-        return newRecord
-        # return pys.recordToByte(newRecord)  # Trinity 使用
+        try:
+            return pys.recordToByte(newRecord)  # Trinity 使用
+        except Exception:
+            return newRecord
 
 if __name__ == '__main__':
     pass

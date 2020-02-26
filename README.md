@@ -47,6 +47,8 @@
     *   [迷之爬蟲](Crawler/noBanana)
 
     *   [爬取上報的可見資訊](Crawler/upMedia)
+
+    *   [爬取上下游的可見資訊](Crawler/newsMarket)
 <br>
 
 2. API 測試工具
