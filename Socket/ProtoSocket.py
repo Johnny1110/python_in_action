@@ -2,7 +2,7 @@ import sys
 from abc import abstractmethod
 from socket import *
 from Socket import ProtoData_pb2
-from Socket.ProtobufVarint32LengthFieldTools import getBodyLength, encode
+from Socket.ProtobufVarint32LengthFieldTools import getBodyLength, frameEncoder, frameDecoder
 
 
 class ProtoPySocket:
@@ -19,8 +19,8 @@ class ProtoPySocket:
     def sendRecord(self, record):
         try:
             record_node = record.SerializeToString()
-            packet = encode(record_node)
-            self.tcpCliSock.send(packet)
+            frame = frameEncoder(record_node)
+            self.tcpCliSock.send(frame)
         except ConnectionAbortedError:
             print('Connection has been terminated by DMServer on your host.')
             sys.exit(0)
@@ -38,8 +38,7 @@ class ProtoPySocket:
         try:
             self.tcpCliSock.connect(self.ADDR)
             while True:
-                data_len = getBodyLength(self.tcpCliSock)
-                protobufdata = self.tcpCliSock.recv(data_len)
+                protobufdata = frameDecoder(self.tcpCliSock)
                 record = ProtoData_pb2.DMRecord()
                 record.ParseFromString(protobufdata)
                 self.processRecord(record)

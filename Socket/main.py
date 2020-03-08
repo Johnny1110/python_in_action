@@ -23,5 +23,5 @@ class MyClient(ProtoPySocket):
 
 
 if __name__ == '__main__':
-    client = MyClient(host="localhost", port=47596)
+    client = MyClient(host="localhost", port=48623)
     client.startUp()

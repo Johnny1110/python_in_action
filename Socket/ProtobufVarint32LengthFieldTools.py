@@ -1,35 +1,38 @@
 import sys
-
-from Socket.ProtoException import CorruptedFrameException
 import bitstring
 
-def readRawVarint32(head_array):
-    temp = b''
-    for i in head_array:
-        temp += i
-    return int.from_bytes(temp, byteorder='big')
+def computeReadableRawSize(head_array):
+    readable_length_array = []
+    for index, data in enumerate(head_array):
+        temp = int.from_bytes(data, byteorder='big', signed=False)
+        if int.from_bytes(data, byteorder='big', signed=True) < 0:
+            temp ^= 0x80  # 若 bin 開頭為 1 就換成 0
+        temp <<= (index * 7)
+        readable_length_array.append(temp)
+
+    readable_length = 0
+    for data in readable_length_array:
+        readable_length += data
+
+    return readable_length
 
 
 def getBodyLength(tcpCliSock):
-    data_len = 0
+    readable_length = 0
     head_array = []
 
     for i in range(1, 6):
         try:
             head_data = tcpCliSock.recv(1)  # 收標頭
             head_array.append(head_data)
-            if(int.from_bytes(head_data, byteorder='big', signed=True) >= 0):
-                data_len = readRawVarint32(head_array)
-                if data_len < 0:
-                    raise CorruptedFrameException("negative length: " + data_len)
-                else:
-                    break
+            if int.from_bytes(head_data, byteorder='big', signed=True) >= 0:
+                readable_length = computeReadableRawSize(head_array)
+                break
         except ConnectionResetError:
             print('Connection has been terminated by DMServer on your host.')
             sys.exit(0)
 
-    return data_len
-
+    return readable_length
 
 def writeRawVarint32Header(stream, bodyLen):
     while True:
@@ -41,19 +44,17 @@ def writeRawVarint32Header(stream, bodyLen):
             bodyLen >>= 7
 
 
-def encode(record_bytes):
+def frameDecoder(tcpCliSock):
+    data_len = getBodyLength(tcpCliSock)
+    return tcpCliSock.recv(data_len)
+
+def frameEncoder(record_bytes):
     bodyLen = len(record_bytes)
-    headerLen = computeRawVarint32Size(bodyLen)
-    print("header_length : ", headerLen)
-    print('body_length : ', bodyLen)
+    # headerLen = computeRawVarint32Size(bodyLen)
     stream = bitstring.BitStream()
-    print('stream_length : ', stream.len)
     writeRawVarint32Header(stream, bodyLen)
     stream.append(record_bytes)
-    print(stream)
-    print(stream.bin)
     return stream.tobytes()
-
 
 
 def computeRawVarint32Size(data_length):
@@ -69,8 +70,8 @@ def computeRawVarint32Size(data_length):
 
 
 if __name__ == '__main__':
-    data = '你好阿，~XD!你好阿，~XD!你好阿，~XD!你好阿，~XD!你好阿，~XD!你好阿，~XD!你好阿，~XD!'.encode('utf-8')
-    print('data : ', data)
-    packet = encode(data)
-    print("解析封包長度 : ", packet)
-    print(packet[0])
+    # length = 0b1111010000000011
+    # print(length.to_bytes(2, byteorder='big', signed=False))
+    test_header_array = [b'\xf4', b'\x03']
+    length = computeReadableRawSize(test_header_array)
+    print("length : ", length)
