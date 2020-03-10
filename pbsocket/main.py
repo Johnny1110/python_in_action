@@ -1,5 +1,5 @@
-from Socket.ProtoSocket import ProtoPySocket
-from Socket.test import generateTestRecordData
+from pbsocket.ProtoSocket import ProtoPySocket
+from pbsocket.test import generateTestRecordData
 
 
 class MyClient(ProtoPySocket):

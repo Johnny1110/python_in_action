@@ -1,6 +1,6 @@
 from queue import Queue
 
-from Crawler.formosa.tools import generateTxDate, PreCrawlerProcessor, generateFormosaUrl
+from Crawler.formosa.tools import generateDate, PreCrawlerProcessor, generateFormosaUrl
 
 outqueue = Queue()
 
@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 frontPage = "http://www.my-formosa.com/KM/M_5.htm"
-txDate = generateTxDate("2020-02-01")
+txDate = generateDate("2020-02-01")
 
 # 實作 fillDataToQueue() 與 getNextPage() 就可以了。
 class Processor(PreCrawlerProcessor):

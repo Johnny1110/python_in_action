@@ -1,8 +1,8 @@
 import sys
 from abc import abstractmethod
 from socket import *
-from Socket import ProtoData_pb2
-from Socket.ProtobufVarint32LengthFieldTools import getBodyLength, frameEncoder, frameDecoder
+from pbsocket import ProtoData_pb2
+from pbsocket.ProtobufVarint32LengthFieldTools import getBodyLength, frameEncoder, frameDecoder
 
 
 class ProtoPySocket:
