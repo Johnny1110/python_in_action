@@ -16,16 +16,19 @@ def parseArticle(url, html):
     for child in content.findAll():
         child.decompose()
     article.content = content.getText().strip()
-    # mySender(article.toMap())
     article.setAttr("html", html)
     return article
 
+
+def processCommentMapList(temp_comment_map_list):
+    print(temp_comment_map_list)
 
 
 def parseComments(article):
     html = article.getAttr("html")
     soup = BeautifulSoup(html, features='lxml')
     comment_tags = soup.findAll("div", class_="push")
+    temp_comment_list = []
     for index, tag in enumerate(comment_tags):
         comment = Entity()
         comment.parent = article
@@ -34,15 +37,26 @@ def parseComments(article):
         comment.authorName = tag.find("span", class_="f3 hl push-userid").getText()
         comment.articleDate = generateIpDate(article.articleDate, tag.find("span", class_="push-ipdatetime").getText())
         comment.content = tag.find("span", class_="f3 push-content").getText()
-        # mySender(comment.toMap())
+        cmtType = tag.find("span", class_="f1 hl push-tag")
+        if cmtType is None:
+            cmtType = tag.find("span", class_="hl push-tag")
+        if cmtType is not None:
+            cmtType = cmtType.getText().strip()
+            comment.setAttr("type", cmtType)
+        else:
+            print("comment type parse error : ", comment.content)
+        temp_comment_list.append(comment)
+
+    comment_list = processCommentMapList(temp_comment_list)
 
 
 
 
 def startParse(url, html):
     article = parseArticle(url, html)
-    print(article.toMap())
     parseComments(article)
+    # mySender(article.toArticleMap())
+    print(article.toArticleMap())
 
 
 if __name__ == '__main__':

@@ -33,11 +33,11 @@ def toMD5(data):
     return m.hexdigest()
 
 def generateIpDate(parent_date, date_str):
-
-    ip = re.search()
-
-    print(parent_date, date_str)
-    return date_str
+    date_str = re.sub('((1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\\.){3}(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]){1} ', "", date_str)
+    year = parent_date.year
+    temp = "{} {}".format(year, date_str).strip()
+    result = datetime.datetime.strptime(temp, "%Y %m/%d %H:%M")
+    return result
 
 def generateDate(date_str):
     try:
@@ -77,6 +77,9 @@ class Entity:
         self.__content = ""
         self.__site = site
         self.__parent = None
+        self.__int1 = 0
+        self.__int2 = 0
+        self.__int3 = 0
         self.__attr = {}
 
     @property
@@ -158,7 +161,48 @@ class Entity:
     def setAttr(self, key, value):
         self.__attr.update({key: value})
 
-    def toMap(self):
+    @property
+    def int1(self) -> int:
+        return self.__int1
+
+    @int1.setter
+    def int1(self, int1: int):
+        self.__int1 = int1
+
+    @property
+    def int2(self) -> int:
+        return self.__int2
+
+    @int2.setter
+    def int2(self, int2: int):
+        self.__int2 = int2
+
+    @property
+    def int3(self) -> int:
+        return self.__int3
+
+    @int3.setter
+    def int3(self, int3: int):
+        self.__int3 = int3
+
+    def toArticleMap(self):
+        newRecord = {}
+        newRecord['url'] = self.__url
+        newRecord['authorName'] = self.__authorName
+        newRecord['title'] = self.__title
+        newRecord['content'] = self.__content
+        newRecord['articleDate'] = self.__articleDate
+        newRecord['site'] = self.__site
+        newRecord['postId'] = self.__postId
+        newRecord['rid'] = self.__rid
+        newRecord['pid'] = self.pid
+        newRecord['int1'] = self.__int1
+        newRecord['int2'] = self.__int2
+        newRecord['int3'] = self.__int3
+        newRecord['replycnt'] = sum([self.__int1, self.__int2, self.__int3])
+        return newRecord
+
+    def toCommentMap(self):
         newRecord = {}
         newRecord['url'] = self.__url
         newRecord['authorName'] = self.__authorName
@@ -172,4 +216,5 @@ class Entity:
         return newRecord
 
 if __name__ == '__main__':
-    pass
+    ans = generateIpDate(datetime.datetime.now(), "03/16 14:05")
+    print(ans)
