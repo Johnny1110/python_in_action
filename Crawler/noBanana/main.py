@@ -5,8 +5,9 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
-floder_path="D:/buffer/comics/sisters/"
+# floder_path="D:/buffer/comics/sisters/"
 # floder_path="D:/buffer/comics/secrets/"
+floder_path="D:/buffer/comics/workout/"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0",
@@ -68,8 +69,9 @@ def downloadImgs(url, chapter, page):
 
 
 if __name__ == '__main__':
-    url = "http://www.no-banana.com/book/336" #  sisters
+    # url = "http://www.no-banana.com/book/336" #  sisters
     # url = "http://www.no-banana.com/book/618"  # secrets
+    url = "http://www.no-banana.com/book/619"  # workout
     menu_url = startParseMenu(url)
     for menu in menu_url:
         img_urls = startParseImageUrls(menu)

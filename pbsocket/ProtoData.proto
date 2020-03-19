@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.frizo.lab.network;
+option optimize_for = SPEED;
+option java_outer_classname="ProtoData";
+
+message Record {
+    enum Signal {
+        NODE = 0;
+        STOP = 1;
+    };
+    Signal signal = 1;
+    map<string, PbData> column = 2;
+}
+
+message PbData{
+    enum DataType {
+        STRING = 0;
+        FLOAT = 1;
+        INT = 2;
+        FILE = 3;
+     };
+    DataType dataType = 1;
+    bytes binaryData = 2;
+}

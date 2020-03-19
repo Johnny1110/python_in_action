@@ -15,17 +15,39 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='ProtoData.proto',
-  package='com.netpro.trinity.trinity.python.proto',
-  syntax='proto2',
-  serialized_options=b'\n\'com.netpro.trinity.trinity.python.protoB\tProtoDataH\001',
-  serialized_pb=b'\n\x0fProtoData.proto\x12\'com.netpro.trinity.trinity.python.proto\"\xcf\x01\n\x08\x44MRecord\x12\x0e\n\x06signal\x18\x01 \x02(\t\x12M\n\x06\x63olumn\x18\x02 \x03(\x0b\x32=.com.netpro.trinity.trinity.python.proto.DMRecord.ColumnEntry\x1a\x64\n\x0b\x43olumnEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x44\n\x05value\x18\x02 \x01(\x0b\x32\x35.com.netpro.trinity.trinity.python.proto.DMMetaColumn:\x02\x38\x01\"\xc4\x01\n\x0c\x44MMetaColumn\x12P\n\x08\x64\x61taType\x18\x01 \x01(\x0e\x32>.com.netpro.trinity.trinity.python.proto.DMMetaColumn.DataType\x12\x12\n\nbinaryData\x18\x02 \x01(\x0c\"N\n\x08\x44\x61taType\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03INT\x10\x01\x12\t\n\x05VIDEO\x10\x02\x12\x07\n\x03JPG\x10\x03\x12\x07\n\x03PNG\x10\x04\x12\x07\n\x03\x44OC\x10\x05\x12\x07\n\x03TXT\x10\x06\x42\x36\n\'com.netpro.trinity.trinity.python.protoB\tProtoDataH\x01'
+  package='com.frizo.lab.network',
+  syntax='proto3',
+  serialized_options=b'B\tProtoDataH\001',
+  serialized_pb=b'\n\x0fProtoData.proto\x12\x15\x63om.frizo.lab.network\"\xe5\x01\n\x06Record\x12\x34\n\x06signal\x18\x01 \x01(\x0e\x32$.com.frizo.lab.network.Record.Signal\x12\x39\n\x06\x63olumn\x18\x02 \x03(\x0b\x32).com.frizo.lab.network.Record.ColumnEntry\x1aL\n\x0b\x43olumnEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12,\n\x05value\x18\x02 \x01(\x0b\x32\x1d.com.frizo.lab.network.PbData:\x02\x38\x01\"\x1c\n\x06Signal\x12\x08\n\x04NODE\x10\x00\x12\x08\n\x04STOP\x10\x01\"\x8c\x01\n\x06PbData\x12\x38\n\x08\x64\x61taType\x18\x01 \x01(\x0e\x32&.com.frizo.lab.network.PbData.DataType\x12\x12\n\nbinaryData\x18\x02 \x01(\x0c\"4\n\x08\x44\x61taType\x12\n\n\x06STRING\x10\x00\x12\t\n\x05\x46LOAT\x10\x01\x12\x07\n\x03INT\x10\x02\x12\x08\n\x04\x46ILE\x10\x03\x42\rB\tProtoDataH\x01\x62\x06proto3'
 )
 
 
 
-_DMMETACOLUMN_DATATYPE = _descriptor.EnumDescriptor(
+_RECORD_SIGNAL = _descriptor.EnumDescriptor(
+  name='Signal',
+  full_name='com.frizo.lab.network.Record.Signal',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='NODE', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='STOP', index=1, number=1,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=244,
+  serialized_end=272,
+)
+_sym_db.RegisterEnumDescriptor(_RECORD_SIGNAL)
+
+_PBDATA_DATATYPE = _descriptor.EnumDescriptor(
   name='DataType',
-  full_name='com.netpro.trinity.trinity.python.proto.DMMetaColumn.DataType',
+  full_name='com.frizo.lab.network.PbData.DataType',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -34,54 +56,42 @@ _DMMETACOLUMN_DATATYPE = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='INT', index=1, number=1,
+      name='FLOAT', index=1, number=1,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='VIDEO', index=2, number=2,
+      name='INT', index=2, number=2,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='JPG', index=3, number=3,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PNG', index=4, number=4,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='DOC', index=5, number=5,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='TXT', index=6, number=6,
+      name='FILE', index=3, number=3,
       serialized_options=None,
       type=None),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=389,
-  serialized_end=467,
+  serialized_start=363,
+  serialized_end=415,
 )
-_sym_db.RegisterEnumDescriptor(_DMMETACOLUMN_DATATYPE)
+_sym_db.RegisterEnumDescriptor(_PBDATA_DATATYPE)
 
 
-_DMRECORD_COLUMNENTRY = _descriptor.Descriptor(
+_RECORD_COLUMNENTRY = _descriptor.Descriptor(
   name='ColumnEntry',
-  full_name='com.netpro.trinity.trinity.python.proto.DMRecord.ColumnEntry',
+  full_name='com.frizo.lab.network.Record.ColumnEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='com.netpro.trinity.trinity.python.proto.DMRecord.ColumnEntry.key', index=0,
+      name='key', full_name='com.frizo.lab.network.Record.ColumnEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='com.netpro.trinity.trinity.python.proto.DMRecord.ColumnEntry.value', index=1,
+      name='value', full_name='com.frizo.lab.network.Record.ColumnEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -95,30 +105,30 @@ _DMRECORD_COLUMNENTRY = _descriptor.Descriptor(
   ],
   serialized_options=b'8\001',
   is_extendable=False,
-  syntax='proto2',
+  syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=168,
-  serialized_end=268,
+  serialized_start=166,
+  serialized_end=242,
 )
 
-_DMRECORD = _descriptor.Descriptor(
-  name='DMRecord',
-  full_name='com.netpro.trinity.trinity.python.proto.DMRecord',
+_RECORD = _descriptor.Descriptor(
+  name='Record',
+  full_name='com.frizo.lab.network.Record',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='signal', full_name='com.netpro.trinity.trinity.python.proto.DMRecord.signal', index=0,
-      number=1, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='signal', full_name='com.frizo.lab.network.Record.signal', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='column', full_name='com.netpro.trinity.trinity.python.proto.DMRecord.column', index=1,
+      name='column', full_name='com.frizo.lab.network.Record.column', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -127,36 +137,37 @@ _DMRECORD = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_DMRECORD_COLUMNENTRY, ],
+  nested_types=[_RECORD_COLUMNENTRY, ],
   enum_types=[
+    _RECORD_SIGNAL,
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto2',
+  syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=61,
-  serialized_end=268,
+  serialized_start=43,
+  serialized_end=272,
 )
 
 
-_DMMETACOLUMN = _descriptor.Descriptor(
-  name='DMMetaColumn',
-  full_name='com.netpro.trinity.trinity.python.proto.DMMetaColumn',
+_PBDATA = _descriptor.Descriptor(
+  name='PbData',
+  full_name='com.frizo.lab.network.PbData',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='dataType', full_name='com.netpro.trinity.trinity.python.proto.DMMetaColumn.dataType', index=0,
+      name='dataType', full_name='com.frizo.lab.network.PbData.dataType', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='binaryData', full_name='com.netpro.trinity.trinity.python.proto.DMMetaColumn.binaryData', index=1,
+      name='binaryData', full_name='com.frizo.lab.network.PbData.binaryData', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
@@ -167,50 +178,52 @@ _DMMETACOLUMN = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _DMMETACOLUMN_DATATYPE,
+    _PBDATA_DATATYPE,
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto2',
+  syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=271,
-  serialized_end=467,
+  serialized_start=275,
+  serialized_end=415,
 )
 
-_DMRECORD_COLUMNENTRY.fields_by_name['value'].message_type = _DMMETACOLUMN
-_DMRECORD_COLUMNENTRY.containing_type = _DMRECORD
-_DMRECORD.fields_by_name['column'].message_type = _DMRECORD_COLUMNENTRY
-_DMMETACOLUMN.fields_by_name['dataType'].enum_type = _DMMETACOLUMN_DATATYPE
-_DMMETACOLUMN_DATATYPE.containing_type = _DMMETACOLUMN
-DESCRIPTOR.message_types_by_name['DMRecord'] = _DMRECORD
-DESCRIPTOR.message_types_by_name['DMMetaColumn'] = _DMMETACOLUMN
+_RECORD_COLUMNENTRY.fields_by_name['value'].message_type = _PBDATA
+_RECORD_COLUMNENTRY.containing_type = _RECORD
+_RECORD.fields_by_name['signal'].enum_type = _RECORD_SIGNAL
+_RECORD.fields_by_name['column'].message_type = _RECORD_COLUMNENTRY
+_RECORD_SIGNAL.containing_type = _RECORD
+_PBDATA.fields_by_name['dataType'].enum_type = _PBDATA_DATATYPE
+_PBDATA_DATATYPE.containing_type = _PBDATA
+DESCRIPTOR.message_types_by_name['Record'] = _RECORD
+DESCRIPTOR.message_types_by_name['PbData'] = _PBDATA
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-DMRecord = _reflection.GeneratedProtocolMessageType('DMRecord', (_message.Message,), {
+Record = _reflection.GeneratedProtocolMessageType('Record', (_message.Message,), {
 
   'ColumnEntry' : _reflection.GeneratedProtocolMessageType('ColumnEntry', (_message.Message,), {
-    'DESCRIPTOR' : _DMRECORD_COLUMNENTRY,
+    'DESCRIPTOR' : _RECORD_COLUMNENTRY,
     '__module__' : 'ProtoData_pb2'
-    # @@protoc_insertion_point(class_scope:com.netpro.trinity.trinity.python.proto.DMRecord.ColumnEntry)
+    # @@protoc_insertion_point(class_scope:com.frizo.lab.network.Record.ColumnEntry)
     })
   ,
-  'DESCRIPTOR' : _DMRECORD,
+  'DESCRIPTOR' : _RECORD,
   '__module__' : 'ProtoData_pb2'
-  # @@protoc_insertion_point(class_scope:com.netpro.trinity.trinity.python.proto.DMRecord)
+  # @@protoc_insertion_point(class_scope:com.frizo.lab.network.Record)
   })
-_sym_db.RegisterMessage(DMRecord)
-_sym_db.RegisterMessage(DMRecord.ColumnEntry)
+_sym_db.RegisterMessage(Record)
+_sym_db.RegisterMessage(Record.ColumnEntry)
 
-DMMetaColumn = _reflection.GeneratedProtocolMessageType('DMMetaColumn', (_message.Message,), {
-  'DESCRIPTOR' : _DMMETACOLUMN,
+PbData = _reflection.GeneratedProtocolMessageType('PbData', (_message.Message,), {
+  'DESCRIPTOR' : _PBDATA,
   '__module__' : 'ProtoData_pb2'
-  # @@protoc_insertion_point(class_scope:com.netpro.trinity.trinity.python.proto.DMMetaColumn)
+  # @@protoc_insertion_point(class_scope:com.frizo.lab.network.PbData)
   })
-_sym_db.RegisterMessage(DMMetaColumn)
+_sym_db.RegisterMessage(PbData)
 
 
 DESCRIPTOR._options = None
-_DMRECORD_COLUMNENTRY._options = None
+_RECORD_COLUMNENTRY._options = None
 # @@protoc_insertion_point(module_scope)

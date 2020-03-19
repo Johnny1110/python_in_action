@@ -1,3 +1,0 @@
-class CorruptedFrameException(RuntimeError):
-    pass
-
