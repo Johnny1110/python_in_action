@@ -213,6 +213,10 @@ class Entity:
         newRecord['postId'] = self.__postId
         newRecord['rid'] = self.__rid
         newRecord['pid'] = self.pid
+        newRecord['int1'] = 0
+        newRecord['int2'] = 0
+        newRecord['int3'] = 0
+        newRecord['replycnt'] = 0
         return newRecord
 
 if __name__ == '__main__':

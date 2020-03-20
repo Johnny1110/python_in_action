@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -9,7 +11,7 @@ def parseArticle(url, html):
     article.url = url
     article.postId = toMD5(url)
     article.rid = article.postId
-    article.title = soup.find("title").getText()
+    article.title = soup.find("span", text="標題").next_sibling.getText()
     article.authorName = soup.find("span", text="作者").next_sibling.getText()
     article.articleDate = generateDate(soup.find("span", text="時間").next_sibling.getText())
     content = soup.find("div", id="main-content")
@@ -19,9 +21,30 @@ def parseArticle(url, html):
     article.setAttr("html", html)
     return article
 
+def takeName(comment):
+    return comment.authorName
 
 def processCommentMapList(temp_comment_map_list):
-    print(temp_comment_map_list)
+    temp_comment_map_list = sorted(temp_comment_map_list, key=lambda comment: comment.authorName)
+
+    result_list = []
+    commentBuff = None
+    for i in range(len(temp_comment_map_list)):
+        if commentBuff is None:
+            commentBuff = temp_comment_map_list[i]
+            continue
+        else:
+            if commentBuff.authorName.__eq__(temp_comment_map_list[i].authorName):
+                if commentBuff.articleDate.__eq__(temp_comment_map_list[i].articleDate):
+                    commentBuff.content = commentBuff.content + temp_comment_map_list[i].content
+                    continue
+
+            result_list.append(commentBuff)
+            commentBuff = temp_comment_map_list[i]
+
+    return result_list
+
+
 
 
 def parseComments(article):
@@ -36,7 +59,7 @@ def parseComments(article):
         comment.rid = article.postId
         comment.authorName = tag.find("span", class_="f3 hl push-userid").getText()
         comment.articleDate = generateIpDate(article.articleDate, tag.find("span", class_="push-ipdatetime").getText())
-        comment.content = tag.find("span", class_="f3 push-content").getText()
+        comment.content = tag.find("span", class_="f3 push-content").getText()[1:].strip()
         cmtType = tag.find("span", class_="f1 hl push-tag")
         if cmtType is None:
             cmtType = tag.find("span", class_="hl push-tag")
@@ -47,8 +70,16 @@ def parseComments(article):
             print("comment type parse error : ", comment.content)
         temp_comment_list.append(comment)
 
-    comment_list = processCommentMapList(temp_comment_list)
+    correct_comment_list = processCommentMapList(temp_comment_list)
 
+    for c in correct_comment_list:
+        if(c.getAttr("type").__eq__("推")):
+            article.int1 += 1
+        if (c.getAttr("type").__eq__("噓")):
+            article.int2 += 1
+        if (c.getAttr("type").__eq__("→")):
+            article.int3 += 1
+        print(c.toCommentMap())
 
 
 
@@ -60,7 +91,7 @@ def startParse(url, html):
 
 
 if __name__ == '__main__':
-    url = "https://www.ptt.cc/bbs/Gossiping/M.1584080011.A.713.html"
+    url = "https://www.ptt.cc/bbs/japanavgirls/M.1584344102.A.BBC.html"
     html = requests.get(url, headers=headers, cookies=cookies)
     html.encoding = 'utf-8'
     html = html.text

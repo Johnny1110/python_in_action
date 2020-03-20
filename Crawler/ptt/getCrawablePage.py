@@ -1,21 +1,24 @@
 from queue import Queue
 
-from Crawler.ptt.tools import generateDate, PreCrawlerProcessor, headers, cookies, generatePTTUrl
+from Crawler.ptt.tools import generateDate, PreCrawlerProcessor, headers, cookies, generatePTTUrl, session
 
 outqueue = Queue()
 
 import requests
 from bs4 import BeautifulSoup
 
-frontPage = "https://www.ptt.cc/bbs/Gossiping/index.html"
-txDate = generateDate("2020-02-01")
+frontPage = "https://www.ptt.cc/bbs/japanavgirls/index.html"
+txDate = generateDate("2020-03-16")
 
 def getIfDateSatisfy(page_soup):
-    date_desc = page_soup.find("span", text="時間")
-    date_str = date_desc.next_sibling.getText()
-    postDate = generateDate(date_str)
-    if postDate >= txDate:
-        return page_soup
+    try:
+        date_desc = page_soup.find("span", text="時間")
+        date_str = date_desc.next_sibling.getText()
+        postDate = generateDate(date_str)
+        if postDate >= txDate:
+            return page_soup
+    except Exception:
+        return "pass"
 
 
 def cleanAnnouncement(soup):
@@ -34,7 +37,7 @@ def cleanAnnouncement(soup):
 
 class Processor(PreCrawlerProcessor):
     def fillDataToQueue(self, url) -> BeautifulSoup:
-        resp = requests.get(url, headers=headers, cookies=cookies)
+        resp = session.get(url, headers=headers, cookies=cookies)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
         pagesBar = soup.find("div", class_="btn-group btn-group-paging")
@@ -45,6 +48,8 @@ class Processor(PreCrawlerProcessor):
             page_soup = BeautifulSoup(innerPage.text, features='lxml')
             html = getIfDateSatisfy(page_soup)
             if html is not None:
+                if html.__eq__("pass"):
+                    continue
                 map = {
                     "url": url,
                     "html": html
