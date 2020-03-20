@@ -70,4 +70,4 @@
 
 4. Python 網路
 
-    * []pbsocket（實現 protobuf 3 varint32RawHeader 協定的 python 資料傳輸 socket）](./pbsocket)
+    * [pbsocket（實現 protobuf 3 varint32RawHeader 協定的 python 資料傳輸 socket）](./pbsocket)
