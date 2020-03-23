@@ -1,0 +1,3 @@
+#LWP-Cookies-2.0
+Set-Cookie3: datr=cH14Xj7c7rsUTouDSRww1y79; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2022-03-23 09:12:16Z"; SameSite=None; httponly=None; version=0
+Set-Cookie3: sb=cH14Xu2BALJDmT_yD4glh6X4; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2022-03-23 09:12:16Z"; SameSite=None; httponly=None; version=0

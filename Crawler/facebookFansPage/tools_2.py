@@ -1,6 +1,6 @@
-import datetime
 import hashlib
-import re
+from http import cookiejar
+
 import requests
 
 from abc import abstractmethod
@@ -11,17 +11,27 @@ from dateutil.parser import parse
 site = '${SITENAME}'
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0',
-    'Accept': 'text/html,application/xhtml+xml,application/json;q=0.9,image/webp,*/*;q=0.8',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Content-Type':	'application/x-www-form-urlencoded',
+    'DNT': '1',
+    'Host': 'm.facebook.com',
+    'Pragma': 'no-cache',
+    'Referer': 'https://m.facebook.com/login/?next&ref=dbl&fl&refid=8',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'
 }
 
 session = requests.session()
-proxies = {
-    'http': 'socks5h://localhost:9150',
-    'https': 'socks5h://localhost:9150',
-}
-session.proxies = proxies
 session.headers = headers
+session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
+
+# proxies = {
+#     'http': 'socks5h://localhost:9150',
+#     'https': 'socks5h://localhost:9150',
+# }
+# session.proxies = proxies
 
 def toMD5(data):
     m = hashlib.md5()
@@ -31,15 +41,10 @@ def toMD5(data):
 def generateDate(date_str):
     return parse(date_str).replace(microsecond=0, tzinfo=None)
 
-# define
-def generateBTUrl(target):
-    return "https://#" + target
 
 # define
-def extractAuthorName(content_str):
-    author = re.search(".*?", content_str)
-    return author.group() if (author is not None) and (len(author.group()) < 15) else ""
-
+def generateMFBUrl(target):
+    return "https://m.facebook.com" + target
 
 class PreCrawlerProcessor:
     @abstractmethod
@@ -138,6 +143,54 @@ class Entity:
         else:
             return ""
 
+    @property
+    def int1(self) -> int:
+        return self.__int1
+
+    @int1.setter
+    def int1(self, int1: int):
+        self.__int1 = int1
+
+    @property
+    def int2(self) -> int:
+        return self.__int2
+
+    @int2.setter
+    def int2(self, int2: int):
+        self.__int2 = int2
+
+    @property
+    def int3(self) -> int:
+        return self.__int3
+
+    @int3.setter
+    def int3(self, int3: int):
+        self.__int3 = int3
+
+    @property
+    def int4(self) -> int:
+        return self.__int4
+
+    @int4.setter
+    def int4(self, int4: int):
+        self.__int4 = int4
+
+    @property
+    def int5(self) -> int:
+        return self.__int5
+
+    @int5.setter
+    def int5(self, int5: int):
+        self.__int5 = int5
+
+    @property
+    def int6(self) -> int:
+        return self.__int6
+
+    @int6.setter
+    def int6(self, int6: int):
+        self.__int6 = int6
+
     def getAttr(self, key):
         return self.__attr[key]
 
@@ -155,6 +208,13 @@ class Entity:
         newRecord['postId'] = self.__postId
         newRecord['rid'] = self.__rid
         newRecord['pid'] = self.pid
+        newRecord['int1'] = self.__int1
+        newRecord['int2'] = self.__int2
+        newRecord['int3'] = self.__int3
+        newRecord['int4'] = self.__int4
+        newRecord['int5'] = self.__int5
+        newRecord['int6'] = self.__int6
+        newRecord['replycnt'] = sum([self.__int1, self.__int2, self.__int3, self.__int4, self.__int5, self.__int6])
         return newRecord
 
 if __name__ == '__main__':
