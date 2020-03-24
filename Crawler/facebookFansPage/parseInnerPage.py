@@ -1,15 +1,36 @@
 import re
+from time import sleep
 
-import requests
 from bs4 import BeautifulSoup
 
-from Crawler.facebookFansPage.fb_date_tools import speculateArticlePostDate
+from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
 from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl
 
 
 def setReplyAttr(article, replyBarUrl):
     resp = session.get(replyBarUrl)
     resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, features='lxml')
+    for ul in soup.findAll("ul"):
+        ul.decompose()
+    react_alts = ['讚', '怒', '哇', '哈', '嗚', '大心']
+    for index, alt in enumerate(react_alts):
+        react = soup.find("img", {"alt": alt})
+        if react is not None:
+            reactCnt = int(react.next_sibling.getText())
+            if index+1 == 1:
+                article.int1 = reactCnt
+            if index+1 == 2:
+                article.int2 = reactCnt
+            if index+1 == 3:
+                article.int3 = reactCnt
+            if index+1 == 4:
+                article.int4 = reactCnt
+            if index+1 == 5:
+                article.int5 = reactCnt
+            if index+1 == 6:
+                article.int6 = reactCnt
+
 
 
 def parseArticle(url):
@@ -28,20 +49,109 @@ def parseArticle(url):
     else:
         article.authorName = "???"
     article.content = soup.find("title").getText()
-    print(article.content)
     title = re.search("^.*[？?！!。~～.]+", article.content)
     if title:
         article.title = title.group()
     else:
         article.title = article.content[0:20]
-    replyBar = soup.find("div", id="add_comment_switcher_placeholder").next_siblings.a
+    replyBar = soup.find("div", {"id": "add_comment_switcher_placeholder"}).next_sibling.a
     replyBarUrl = generateMFBUrl(replyBar.get("href"))
     setReplyAttr(article, replyBarUrl)
     print(article.toMap())
+    article.setAttr("soup", soup)
+    return article
+
+
+def parseReplys(reply_area, comment, user_id):
+    abbrs = reply_area.findAll("abbr")
+    for abbr in abbrs:
+        tag_withID = abbr.parent.parent.parent
+        reply = Entity()
+        reply.parent = comment
+        reply.postId = toMD5('{}_{}'.format(comment.postId, tag_withID.get("id")))
+        reply.rid = comment.parent.postId
+        h3_authorName = tag_withID.find("h3")
+        reply.authorName = h3_authorName.getText()
+        reply.content = h3_authorName.next_sibling.getText()
+        if reply.content.__eq__(""):
+            reply.content = "圖片"
+        reply.articleDate = speculateArticlePostDate(tag_withID.find("abbr").getText())
+        react_like_tag = tag_withID.find("abbr").parent.find("span", {'id': re.compile('^like_.*')})
+        ufi_url = react_like_tag.find("a", {"href": re.compile('^/ufi/reaction/profile/browser/.*')})
+        if ufi_url:
+            setReplyAttr(reply, generateMFBUrl(ufi_url.get("href")))
+        print('寫入回應 : ', reply.toMap())
+
+    more = reply_area.find("div", {"id": re.compile("^comment_replies_more_1.*")})
+    if more:
+        more_url = generateMFBUrl(more.get("href"))
+        resp = session.get(more_url)
+        resp.encoding = 'utf-8'
+        soup = BeautifulSoup(resp.text, features='lxml')
+        main_comment = soup.find("div", id=user_id)
+        reply_area = main_comment.next_sibling
+        parseReplys(reply_area, comment, user_id)
+
+
+
+def processCommentAndReply(user_id, replyUrl, comment):
+    resp = session.get(replyUrl)
+    resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, features='lxml')
+    main_comment = soup.find("div", id=user_id)
+    h3_authorName = main_comment.find("h3")
+    comment.postId = toMD5('{}_{}'.format(comment.parent.url, user_id))
+    comment.rid = comment.parent.postId
+    comment.authorName = h3_authorName.getText()
+    comment.content = h3_authorName.next_sibling.getText()
+    if comment.content.__eq__(""):
+        comment.content = "圖片"
+
+    print("留言時間: ", main_comment.find("abbr").getText())
+    comment.articleDate = speculateArticlePostDate(main_comment.find("abbr").getText())
+    react_like_tag = main_comment.find("abbr").parent.find("span", {'id': re.compile('^like_.*')})
+    ufi_url = react_like_tag.find("a", {"href": re.compile('^/ufi/reaction/profile/browser/.*')})
+    if ufi_url:
+        setReplyAttr(comment, generateMFBUrl(ufi_url.get("href")))
+    print('寫入留言 : ', comment.toMap())
+
+    reply_area = main_comment.next_sibling
+    parseReplys(reply_area, comment, user_id)
+
+
+
+
+
+def parseComments(article):
+    sleep(3)
+    soup = article.getAttr("soup")
+    comment_tag = soup.find("div", {"id": "add_comment_link_placeholder"}).previous_sibling
+    abbrs = comment_tag.findAll("abbr")
+    for abbr in abbrs:
+        user_comment = abbr.parent.parent.parent
+        user_id = user_comment.get("id")
+        replyUrl = generateMFBUrl(user_comment.find("a", text="回覆").get("href"))
+        comment = Entity()
+        comment.parent = article
+        processCommentAndReply(user_id, replyUrl, comment)
+
+    more = comment_tag.find("div", {"id": re.compile("^see_next_.*")})
+    if more:
+        more_url = generateMFBUrl(more.a.get("href"))
+        resp = session.get(more_url)
+        resp.encoding = 'utf-8'
+        soup = BeautifulSoup(resp.text, features='lxml')
+        article.setAttr("soup", soup)
+        parseComments(article)
 
 
 def startParse(url):
-    article = parseArticle(url)
+    login()
+    try:
+        article = parseArticle(url)
+        parseComments(article)
+    except Exception:
+        print('文章解析失敗 url: ', url)
 
 
 if __name__ == '__main__':

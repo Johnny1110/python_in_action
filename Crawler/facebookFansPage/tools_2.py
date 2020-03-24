@@ -69,6 +69,13 @@ class Entity:
         self.__site = site
         self.__parent = None
         self.__attr = {}
+        self.__int1 = 0
+        self.__int2 = 0
+        self.__int3 = 0
+        self.__int4 = 0
+        self.__int5 = 0
+        self.__int6 = 0
+
 
     @property
     def parent(self):
