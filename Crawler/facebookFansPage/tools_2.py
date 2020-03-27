@@ -1,5 +1,7 @@
 import hashlib
+import random
 from http import cookiejar
+from time import sleep
 
 import requests
 
@@ -9,6 +11,8 @@ from dateutil.parser import parse
 
 
 site = '${SITENAME}'
+
+slow_down = True
 
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -32,6 +36,11 @@ session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
 #     'https': 'socks5h://localhost:9150',
 # }
 # session.proxies = proxies
+
+def randomSleep():
+    if slow_down:
+        ran_num = random.randint(1, 5)
+        sleep(ran_num)
 
 def toMD5(data):
     m = hashlib.md5()

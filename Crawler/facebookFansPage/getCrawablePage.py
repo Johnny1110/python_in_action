@@ -1,21 +1,17 @@
-import datetime
-
 from bs4 import BeautifulSoup
 
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
-from Crawler.facebookFansPage.tools_2 import session, PreCrawlerProcessor, generateMFBUrl, generateDate
+from Crawler.facebookFansPage.tools_2 import session, PreCrawlerProcessor, generateMFBUrl, generateDate, randomSleep
 
-frontPage = "https://m.facebook.com/apple.realtimenews?refid=46&ref=dbl"
+frontPage = "https://m.facebook.com/tsaiingwen?refid=46&ref=dbl"
 txDate = generateDate('2020-03-23')
 
-def startCraw():
-    resp = session.get(frontPage)
-    session.cookies.save()
-    pass
+
 
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
         print("frontPage url: ", url)
+        randomSleep()
         resp = session.get(url)
         session.cookies.save()
         resp.encoding = 'utf-8'

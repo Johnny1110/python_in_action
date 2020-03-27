@@ -1,23 +1,32 @@
 import re
-from time import sleep
 
 from bs4 import BeautifulSoup
 
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
-from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl
+from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl, randomSleep
 
 
 def setReplyAttr(article, replyBarUrl):
+    randomSleep()
     resp = session.get(replyBarUrl)
     resp.encoding = 'utf-8'
     soup = BeautifulSoup(resp.text, features='lxml')
     for ul in soup.findAll("ul"):
         ul.decompose()
-    react_alts = ['讚', '怒', '哇', '哈', '嗚', '大心']
+    react_alts = ['讚', '大心', '哇', '哈', '嗚', '怒']
     for index, alt in enumerate(react_alts):
         react = soup.find("img", {"alt": alt})
         if react is not None:
-            reactCnt = int(react.next_sibling.getText())
+            cnt_str = react.next_sibling.getText()
+
+            if re.match(".*,.*", cnt_str):
+                cnt_str = re.sub(",", "", cnt_str)
+            if re.match(".*萬", cnt_str):
+                cnt_str = re.sub(" 萬", "", cnt_str)
+                reactCnt = int(float(cnt_str) * 10000)
+            else:
+                reactCnt = int(cnt_str)
+
             if index+1 == 1:
                 article.int1 = reactCnt
             if index+1 == 2:
@@ -84,7 +93,7 @@ def parseReplys(reply_area, comment, user_id):
 
     more = reply_area.find("div", {"id": re.compile("^comment_replies_more_1.*")})
     if more:
-        more_url = generateMFBUrl(more.get("href"))
+        more_url = generateMFBUrl(more.a.get("href"))
         resp = session.get(more_url)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
@@ -95,6 +104,7 @@ def parseReplys(reply_area, comment, user_id):
 
 
 def processCommentAndReply(user_id, replyUrl, comment):
+    randomSleep()
     resp = session.get(replyUrl)
     resp.encoding = 'utf-8'
     soup = BeautifulSoup(resp.text, features='lxml')
@@ -123,7 +133,6 @@ def processCommentAndReply(user_id, replyUrl, comment):
 
 
 def parseComments(article):
-    sleep(3)
     soup = article.getAttr("soup")
     comment_tag = soup.find("div", {"id": "add_comment_link_placeholder"}).previous_sibling
     abbrs = comment_tag.findAll("abbr")
@@ -138,6 +147,7 @@ def parseComments(article):
     more = comment_tag.find("div", {"id": re.compile("^see_next_.*")})
     if more:
         more_url = generateMFBUrl(more.a.get("href"))
+        randomSleep()
         resp = session.get(more_url)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
@@ -150,10 +160,11 @@ def startParse(url):
     try:
         article = parseArticle(url)
         parseComments(article)
-    except Exception:
+    except Exception as e :
         print('文章解析失敗 url: ', url)
+        raise e
 
 
 if __name__ == '__main__':
-    url = 'https://m.facebook.com/story.php?story_fbid=2718474544942401&id=352962731493606&refid=17&ref=dbl&_ft_=mf_story_key.2718474544942401%3Atop_level_post_id.2718474544942401%3Atl_objid.2718474544942401%3Acontent_owner_id_new.352962731493606%3Athrowback_story_fbid.2718474544942401%3Apage_id.352962731493606%3Aphoto_id.2718416124948243%3Astory_location.4%3Astory_attachment_style.photo%3Atds_flgs.3%3Apage_insights.%7B%22352962731493606%22%3A%7B%22page_id%22%3A352962731493606%2C%22actor_id%22%3A352962731493606%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A266%2C%22publish_time%22%3A1584904920%2C%22story_name%22%3A%22EntStatusCreationStory%22%2C%22story_fbid%22%3A%5B2718474544942401%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%2C%22targets%22%3A%5B%7B%22actor_id%22%3A352962731493606%2C%22page_id%22%3A352962731493606%2C%22post_id%22%3A2718474544942401%2C%22role%22%3A1%2C%22share_id%22%3A0%7D%5D%7D%7D%3Athid.352962731493606%3A306061129499414%3A2%3A0%3A1585724399%3A8894510529520450224&__tn__=%2AW-R#footer_action_list'
+    url = 'https://m.facebook.com/story.php?story_fbid=10156561126226065&id=46251501064&refid=17&ref=dbl&_ft_=mf_story_key.10156561126226065%3Atop_level_post_id.10156561126226065%3Atl_objid.10156561126226065%3Acontent_owner_id_new.46251501064%3Athrowback_story_fbid.10156561126226065%3Apage_id.46251501064%3Aphoto_id.10156561125666065%3Astory_location.4%3Astory_attachment_style.photo%3Atds_flgs.3%3Apage_insights.%7B%2246251501064%22%3A%7B%22page_id%22%3A46251501064%2C%22actor_id%22%3A46251501064%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A266%2C%22publish_time%22%3A1585122136%2C%22story_name%22%3A%22EntStatusCreationStory%22%2C%22story_fbid%22%3A%5B10156561126226065%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%2C%22targets%22%3A%5B%7B%22actor_id%22%3A46251501064%2C%22page_id%22%3A46251501064%2C%22post_id%22%3A10156561126226065%2C%22role%22%3A1%2C%22share_id%22%3A0%7D%5D%7D%2C%22405240086317285%22%3A%7B%22page_id%22%3A405240086317285%2C%22actor_id%22%3A46251501064%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22role%22%3A16%2C%22sl%22%3A4%7D%7D%3Athid.46251501064%3A306061129499414%3A2%3A0%3A1585724399%3A-3150810243926372791&__tn__=%2AW-R#footer_action_list'
     startParse(url)

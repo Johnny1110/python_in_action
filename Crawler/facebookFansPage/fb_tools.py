@@ -12,8 +12,8 @@ def login():
         'try_number': '0',
         'unrecognized_tries': '0',
         'm_ts': str(int(datetime.datetime.now().timestamp())),
-        'email': 'FrizoStudio@gmail.com',
-        'pass': 'Frizo1234',
+        'email': 'gmo.netpro@gmail.com',
+        'pass': '89631965',
         'login': '登入',
     }
     url = "https://m.facebook.com/login/device-based/regular/login/?refsrc=https%3A%2F%2Fm.facebook.com%2Flogin%2F%3Fref%3Ddbl&lwv=100&ref=dbl"
@@ -50,7 +50,6 @@ def speculateArticlePostDate(date_str):
             '星期三': 5,
             '星期四': 6,
             '星期五': 7,
-
         }
         time = str(re.sub(".*[上下]午", "", date_str)).split(":")
         today = datetime.datetime.today()
@@ -63,8 +62,6 @@ def speculateArticlePostDate(date_str):
         target_day = today - datetime.timedelta(days=distance)
         return target_day
 
-
-        return today_weekday
 
     if re.match("^1?[0-9]+月[1-3]?[0-9]+日[上下]午.*$", date_str):
         date = re.search("1?[0-9]+月[1-3]?[0-9]+日", date_str).group()
