@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
 from Crawler.facebookFansPage.tools_2 import session, PreCrawlerProcessor, generateMFBUrl, generateDate, randomSleep
 
-frontPage = "https://m.facebook.com/tsaiingwen?refid=46&ref=dbl"
-txDate = generateDate('2020-03-23')
+frontPage = "https://m.facebook.com/apple.realtimenews?refid=46&ref=dbl"
+txDate = generateDate('2020-01-01')
 
 
 
@@ -17,12 +17,14 @@ class Processor(PreCrawlerProcessor):
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
         pageBar = soup.find("a", text="顯示更多")
+        print("soup :: ", soup)
+        print("pageBar :: ", pageBar)
         articles = soup.findAll("div", {"role": "article"})
         for a in articles:
             try:
                 abbr = a.find("abbr").getText()
                 postDate = speculateArticlePostDate(abbr)
-                print(postDate)
+                print("postDate = ", postDate)
                 if postDate >= txDate:
                     target = {
                         'url': generateMFBUrl(a.find("a", text="完整動態").get("href"))

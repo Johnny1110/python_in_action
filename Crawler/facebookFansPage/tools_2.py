@@ -12,10 +12,11 @@ from dateutil.parser import parse
 
 site = '${SITENAME}'
 
-slow_down = True
+slow_down = False
 
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'zh-TW,zh;q=0.5',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
     'Content-Type':	'application/x-www-form-urlencoded',

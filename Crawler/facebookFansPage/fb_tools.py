@@ -1,10 +1,43 @@
 import datetime
 import re
+import sqlite3
+import random
 
 from Crawler.facebookFansPage.tools_2 import session
 
+def getRandomAccount():
+    db_file = "fake_account.db"
+    conn = None
+    account = None
+    try:
+        conn = sqlite3.connect(db_file)
+        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.locked = 0;")
+        acc_list = result.fetchall()
+        acc_index = random.randint(0, len(acc_list) - 1)
+        account = acc_list[acc_index]
+    except Exception as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+        return account[1], account[2]
+
+def lockedAccount(email):
+    db_file = "fake_account.db"
+    conn = None
+    account = None
+    try:
+        conn = sqlite3.connect(db_file)
+        result = conn.execute("UPDATE account a SET a.locked = 1 WHERE a.email = '{}'".format(email))
+    except Exception as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
 
 def login():
+    email, passwd = getRandomAccount()
+    print("嘗試登入 FB 帳號 :　", email)
     data = {
         'lsd': 'AVq1Hm_O',
         'jazoest': '2668',
@@ -12,16 +45,19 @@ def login():
         'try_number': '0',
         'unrecognized_tries': '0',
         'm_ts': str(int(datetime.datetime.now().timestamp())),
-        'email': 'gmo.netpro@gmail.com',
-        'pass': '89631965',
+        'email': email,
+        'pass': passwd,
         'login': '登入',
     }
     url = "https://m.facebook.com/login/device-based/regular/login/?refsrc=https%3A%2F%2Fm.facebook.com%2Flogin%2F%3Fref%3Ddbl&lwv=100&ref=dbl"
     resp = session.post(url=url, data=data)
     session.cookies.save()
-    resp.encoding = 'utf-8'
+    resp.encoding = 'utf-8',
     print('cookies: ', session.cookies)
-
+    if resp.text.__contains__("你目前無法使用這項功能。"):
+        print("帳號被鎖 : ", email)
+        lockedAccount(email)
+        login()
 
 def speculateArticlePostDate(date_str):
     if re.match("^[1-5]?[0-9]+ 分鐘$", date_str):
@@ -84,5 +120,4 @@ def speculateArticlePostDate(date_str):
             return date.replace(hour=int(time[0])+12, minute=int(time[1]), microsecond=0)
 
 if __name__ == '__main__':
-    ans = speculateArticlePostDate("星期六下午12:12")
-    print(ans)
+    login()
