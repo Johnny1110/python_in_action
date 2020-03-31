@@ -12,7 +12,7 @@ from dateutil.parser import parse
 
 site = '${SITENAME}'
 
-slow_down = False
+slow_down = True
 
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -216,9 +216,9 @@ class Entity:
 
     def toMap(self):
         newRecord = {}
-        newRecord['url'] = self.__url
+        newRecord['pageUrl'] = self.__url
         newRecord['authorName'] = self.__authorName
-        newRecord['title'] = self.__title
+        newRecord['postTitle'] = self.__title
         newRecord['content'] = self.__content
         newRecord['articleDate'] = self.__articleDate
         newRecord['site'] = self.__site

@@ -47,15 +47,14 @@ def parseArticle(url):
     resp.encoding = 'utf-8'
     session.cookies.save()
     soup = BeautifulSoup(resp.text, features='lxml')
-    print("soup :: ", soup)
     article = Entity()
-    article.url = url
+    article.url = str(re.search("^https://.*/story\.php\?story_fbid=.*&id=.*?&", url).group()[0:-1])
     article.postId = toMD5(url)
     article.rid = article.postId
     authorName = soup.findAll("table", {"role": "presentation"})[2].getText()
     article.articleDate = speculateArticlePostDate(soup.find("abbr").getText())
     if authorName:
-        article.authorName = authorName
+        article.authorName = re.sub("查看編輯紀錄", "", authorName)
     else:
         article.authorName = "???"
     article.content = soup.find("title").getText()

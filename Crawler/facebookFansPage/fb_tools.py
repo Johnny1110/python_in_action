@@ -3,16 +3,21 @@ import re
 import sqlite3
 import random
 
+from bs4 import BeautifulSoup
+
 from Crawler.facebookFansPage.tools_2 import session
 
+db_file = "fake_account.db"
+
 def getRandomAccount():
-    db_file = "fake_account.db"
     conn = None
     account = None
     try:
         conn = sqlite3.connect(db_file)
         result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.locked = 0;")
         acc_list = result.fetchall()
+        if len(acc_list) == 0:
+            raise RuntimeError("db 中沒有剩餘可用帳號了。")
         acc_index = random.randint(0, len(acc_list) - 1)
         account = acc_list[acc_index]
     except Exception as e:
@@ -22,17 +27,17 @@ def getRandomAccount():
             conn.close()
         return account[1], account[2]
 
-def lockedAccount(email):
-    db_file = "fake_account.db"
+def lockedAccount(email, msg):
     conn = None
-    account = None
     try:
         conn = sqlite3.connect(db_file)
-        result = conn.execute("UPDATE account a SET a.locked = 1 WHERE a.email = '{}'".format(email))
+        conn.execute("UPDATE account SET locked = 1, locked_msg = '{}' WHERE email = '{}'".format(msg, email))
     except Exception as e:
+        conn.rollback()
         print(e)
     finally:
         if conn:
+            conn.commit()
             conn.close()
 
 def login():
@@ -54,10 +59,14 @@ def login():
     session.cookies.save()
     resp.encoding = 'utf-8',
     print('cookies: ', session.cookies)
-    if resp.text.__contains__("你目前無法使用這項功能。"):
-        print("帳號被鎖 : ", email)
-        lockedAccount(email)
-        login()
+
+    for cookie in session.cookies:
+        if cookie.name.__eq__("c_user"):
+            return
+    soup = BeautifulSoup(resp.text, features='lxml')
+    print("帳號被鎖 : ", email)
+    lockedAccount(email, soup.text)
+    login()
 
 def speculateArticlePostDate(date_str):
     if re.match("^[1-5]?[0-9]+ 分鐘$", date_str):

@@ -17,8 +17,6 @@ class Processor(PreCrawlerProcessor):
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
         pageBar = soup.find("a", text="顯示更多")
-        print("soup :: ", soup)
-        print("pageBar :: ", pageBar)
         articles = soup.findAll("div", {"role": "article"})
         for a in articles:
             try:
