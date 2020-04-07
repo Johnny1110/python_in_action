@@ -1,7 +1,3 @@
-from queue import Queue
-
-outqueue = Queue()
-
 import requests
 from bs4 import BeautifulSoup
 
