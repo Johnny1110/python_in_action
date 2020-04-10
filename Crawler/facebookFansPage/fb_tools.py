@@ -29,6 +29,8 @@ def getRandomAccount():
         return account[1], account[3]
 
 def lockedAccount(email, msg):
+    print("lock: ", email)
+    print("message: ", msg)
     conn = None
     try:
         conn = sqlite3.connect(db_file)

@@ -60,7 +60,8 @@ def parseArticle(url):
     resp = sendRequest(url)
     soup = BeautifulSoup(resp.text, features='lxml')
     article = Entity()
-    article.url = str(re.search("^https://.*/story\.php\?story_fbid=.*&id=.*?&", url).group()[0:-1])
+    print(url)
+    article.url = str(re.search("https://.*refid=17", url).group()[0:-1])
     article.postId = toMD5(url)
     article.rid = article.postId
     authorName = soup.findAll("table", {"role": "presentation"})[2].getText()
@@ -169,12 +170,13 @@ def startParse(url):
         article = parseArticle(url)
         # parseComments(article)
     except Exception as e:
+        del article
         print('文章解析失敗 url: ', url)
         print('更換帳號後重試...')
-        lockedAccount(email, e.__str__())
+        lockedAccount(email, re.sub("'", "\"", e.__str__()))
         startParse(url)
 
 
 if __name__ == '__main__':
-    url = 'https://m.facebook.com/story.php?story_fbid=10157498939442875&id=283285647874&refid=17&_ft_=mf_story_key.10157498939442875%3Atop_level_post_id.10157498939442875%3Atl_objid.10157498939442875%3Acontent_owner_id_new.283285647874%3Athrowback_story_fbid.10157498939442875%3Apage_id.283285647874%3Astory_location.4%3Astory_attachment_style.share%3Apage_insights.%7B%22283285647874%22%3A%7B%22page_id%22%3A283285647874%2C%22actor_id%22%3A283285647874%2C%22dm%22%3A%7B%22isShare%22%3A1%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A266%2C%22publish_time%22%3A1585551024%2C%22story_name%22%3A%22EntStatusCreationStory%22%2C%22story_fbid%22%3A%5B10157498939442875%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%2C%22targets%22%3A%5B%7B%22actor_id%22%3A283285647874%2C%22page_id%22%3A283285647874%2C%22post_id%22%3A10157498939442875%2C%22role%22%3A1%2C%22share_id%22%3A0%7D%5D%7D%7D%3Athid.283285647874%3A306061129499414%3A2%3A0%3A1585724399%3A6554943296578502967&__tn__=%2AW-R#footer_action_list'
+    url = ' https://m.facebook.com/pnnpts/photos/a.10150746264073833/10158406122218833/?type=3&refid=17&_ft_=mf_story_key.10158406150493833%3Atop_level_post_id.10158406122218833%3Atl_objid.10158406122218833%3Acontent_owner_id_new.335636328832%3Athrowback_story_fbid.10158406150493833%3Apage_id.335636328832%3Aphoto_id.10158406122218833%3Astory_location.4%3Astory_attachment_style.cover_photo%3Atds_flgs.3%3Apage_insights.%7B%22335636328832%22%3A%7B%22page_id%22%3A335636328832%2C%22actor_id%22%3A335636328832%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntCoverPhotoEdgeStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A22%2C%22publish_time%22%3A1586499361%2C%22story_name%22%3A%22EntCoverPhotoEdgeStory%22%2C%22story_fbid%22%3A%5B10158406150493833%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%7D%7D%3Athid.335636328832%3A306061129499414%3A62%3A0%3A1588316399%3A-2958114841927984305&__tn__=%2AW-R#footer_action_list'
     startParse(url)
