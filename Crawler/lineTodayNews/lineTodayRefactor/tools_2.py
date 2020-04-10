@@ -199,11 +199,12 @@ class Entity:
         newRecord['site'] = self.__site
         newRecord['postId'] = toMD5(self.__postId)
         newRecord['rid'] = toMD5(self.__rid)
-        newRecord['pid'] = toMD5(self.pid)
+        newRecord['pid'] = toMD5(self.pid) if not self.pid.__eq__("") else self.pid
         newRecord['likescnt'] = self.__likescnt
         newRecord['dislikescnt'] = self.__dislikescnt
         newRecord['replycnt'] = self.__replycnt
         return newRecord
 
 if __name__ == '__main__':
-    pass
+    ans = toMD5("")
+    print(ans)
