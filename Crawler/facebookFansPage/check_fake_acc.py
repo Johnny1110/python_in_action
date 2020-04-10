@@ -1,17 +1,18 @@
 import datetime
 import sqlite3
+from time import sleep
 
 from bs4 import BeautifulSoup
 
 from Crawler.facebookFansPage.tools_2 import session
 
-db_file = "D:\\Mike_workshop\\lab\\fake_account.db"
+db_file = "fake_account.db"
 
 def lockedAccount(email, msg):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        conn.execute("UPDATE account SET locked = 1, locked_msg = '{}' WHERE email = '{}'".format(msg, email))
+        conn.execute("UPDATE account SET locked = 1, locked_msg = '{}', cookies_file = '' WHERE email = '{}'".format(msg, email))
     except Exception as e:
         conn.rollback()
         print(e)
@@ -20,11 +21,11 @@ def lockedAccount(email, msg):
             conn.commit()
             conn.close()
 
-def unlockedAccount(email):
+def unlockedAccount(email, cookieContentFile):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        conn.execute("UPDATE account SET locked = 0, locked_msg = '' WHERE email = '{}'".format(email))
+        conn.execute("UPDATE account SET locked = 0, locked_msg = '', cookies_file = '{}' WHERE email = '{}'".format(cookieContentFile, email))
     except Exception as e:
         conn.rollback()
         print(e)
@@ -55,7 +56,10 @@ def testLogin(email, passwd):
     print('cookies: ', session.cookies)
     for cookie in session.cookies:
         if cookie.name.__eq__("c_user"):
-            unlockedAccount(email)
+            with open("LibCookies.txt") as cookieFile:
+                fileContentBuf = cookieFile.read()
+                cookieFile.close()
+                unlockedAccount(email, fileContentBuf)
             return
     soup = BeautifulSoup(resp.text, features='lxml')
     lockedAccount(email, soup.getText())
@@ -70,6 +74,7 @@ def checkAllAccount():
         acc_list = result.fetchall()
         print("acc_list : ", acc_list)
         for acc in acc_list:
+            sleep(5)
             testLogin(acc[1], acc[2])
     except Exception as e:
         conn.rollback()
@@ -81,3 +86,4 @@ def checkAllAccount():
 
 if __name__ == '__main__':
     checkAllAccount()
+    # testLogin("mani67kijh@gmail.com", "trinityyt")

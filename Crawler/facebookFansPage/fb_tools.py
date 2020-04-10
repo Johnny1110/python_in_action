@@ -2,6 +2,7 @@ import datetime
 import re
 import sqlite3
 import random
+from time import sleep
 
 from bs4 import BeautifulSoup
 
@@ -14,7 +15,7 @@ def getRandomAccount():
     account = None
     try:
         conn = sqlite3.connect(db_file)
-        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.locked = 0;")
+        result = conn.execute("SELECT a.id, a.email, a.passwd, a.cookies_file FROM account a WHERE a.locked = 0;")
         acc_list = result.fetchall()
         if len(acc_list) == 0:
             raise RuntimeError("db 中沒有剩餘可用帳號了。")
@@ -25,7 +26,7 @@ def getRandomAccount():
     finally:
         if conn:
             conn.close()
-        return account[1], account[2]
+        return account[1], account[3]
 
 def lockedAccount(email, msg):
     conn = None
@@ -41,32 +42,16 @@ def lockedAccount(email, msg):
             conn.close()
 
 def login():
-    email, passwd = getRandomAccount()
-    print("嘗試登入 FB 帳號 :　", email)
-    data = {
-        'lsd': 'AVq1Hm_O',
-        'jazoest': '2668',
-        'li': 'AEp4XssNBBL4pR5EvIMg-jEb',
-        'try_number': '0',
-        'unrecognized_tries': '0',
-        'm_ts': str(int(datetime.datetime.now().timestamp())),
-        'email': email,
-        'pass': passwd,
-        'login': '登入',
-    }
-    url = "https://m.facebook.com/login/device-based/regular/login/?refsrc=https%3A%2F%2Fm.facebook.com%2Flogin%2F%3Fref%3Ddbl&lwv=100&ref=dbl"
-    resp = session.post(url=url, data=data)
-    session.cookies.save()
-    resp.encoding = 'utf-8',
+    email, cookies = getRandomAccount()
+    print("使用 FB 帳號 :　", email)
+    with open("LibCookies.txt", 'w') as cookieFile:
+        print(cookies)
+        cookieFile.write(cookies)
+        cookieFile.close()
+    session.cookies.load(ignore_discard=True, ignore_expires=True)
     print('cookies: ', session.cookies)
+    return email
 
-    for cookie in session.cookies:
-        if cookie.name.__eq__("c_user"):
-            return
-    soup = BeautifulSoup(resp.text, features='lxml')
-    print("帳號被鎖 : ", email)
-    lockedAccount(email, soup.text)
-    login()
 
 def speculateArticlePostDate(date_str):
     if re.match("^[1-5]?[0-9]+ 分鐘$", date_str):

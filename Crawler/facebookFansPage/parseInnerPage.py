@@ -2,14 +2,28 @@ import re
 
 from bs4 import BeautifulSoup
 
-from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
+from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login, lockedAccount
 from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl, randomSleep
 
+requests_count = 300
+
+def sendRequest(url, method="GET", params=None):
+    global requests_count
+    requests_count -= 1
+    if requests_count < 1:
+        login()
+    resp = None
+    if method.__eq__("GET"):
+        resp = session.get(url)
+    if method.__eq__("POST"):
+        resp = session.post(url, data=params)
+    resp.encoding = 'utf-8'
+    session.cookies.save()
+    return resp
 
 def setReplyAttr(article, replyBarUrl):
     randomSleep()
-    resp = session.get(replyBarUrl)
-    resp.encoding = 'utf-8'
+    resp = sendRequest(replyBarUrl)
     soup = BeautifulSoup(resp.text, features='lxml')
     for ul in soup.findAll("ul"):
         ul.decompose()
@@ -43,9 +57,7 @@ def setReplyAttr(article, replyBarUrl):
 
 
 def parseArticle(url):
-    resp = session.get(url)
-    resp.encoding = 'utf-8'
-    session.cookies.save()
+    resp = sendRequest(url)
     soup = BeautifulSoup(resp.text, features='lxml')
     article = Entity()
     article.url = str(re.search("^https://.*/story\.php\?story_fbid=.*&id=.*?&", url).group()[0:-1])
@@ -95,8 +107,7 @@ def parseReplys(reply_area, comment, user_id):
     more = reply_area.find("div", {"id": re.compile("^comment_replies_more_1.*")})
     if more:
         more_url = generateMFBUrl(more.a.get("href"))
-        resp = session.get(more_url)
-        resp.encoding = 'utf-8'
+        resp = sendRequest(more_url)
         soup = BeautifulSoup(resp.text, features='lxml')
         main_comment = soup.find("div", id=user_id)
         reply_area = main_comment.next_sibling
@@ -106,8 +117,7 @@ def parseReplys(reply_area, comment, user_id):
 
 def processCommentAndReply(user_id, replyUrl, comment):
     randomSleep()
-    resp = session.get(replyUrl)
-    resp.encoding = 'utf-8'
+    resp = sendRequest(replyUrl)
     soup = BeautifulSoup(resp.text, features='lxml')
     main_comment = soup.find("div", id=user_id)
     h3_authorName = main_comment.find("h3")
@@ -131,8 +141,6 @@ def processCommentAndReply(user_id, replyUrl, comment):
 
 
 
-
-
 def parseComments(article):
     soup = article.getAttr("soup")
     comment_tag = soup.find("div", {"id": "add_comment_link_placeholder"}).previous_sibling
@@ -149,21 +157,22 @@ def parseComments(article):
     if more:
         more_url = generateMFBUrl(more.a.get("href"))
         randomSleep()
-        resp = session.get(more_url)
-        resp.encoding = 'utf-8'
+        resp = sendRequest(more_url)
         soup = BeautifulSoup(resp.text, features='lxml')
         article.setAttr("soup", soup)
         parseComments(article)
 
 
 def startParse(url):
-    login()
+    email = login()
     try:
         article = parseArticle(url)
-        parseComments(article)
-    except Exception as e :
+        # parseComments(article)
+    except Exception as e:
         print('文章解析失敗 url: ', url)
-        raise e
+        print('更換帳號後重試...')
+        lockedAccount(email, e.__str__())
+        startParse(url)
 
 
 if __name__ == '__main__':

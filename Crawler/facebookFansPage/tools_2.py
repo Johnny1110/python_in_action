@@ -40,7 +40,7 @@ session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
 
 def randomSleep():
     if slow_down:
-        ran_num = random.randint(1, 5)
+        ran_num = random.randint(1, 4)
         sleep(ran_num)
 
 def toMD5(data):

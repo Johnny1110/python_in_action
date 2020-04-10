@@ -7,7 +7,6 @@ frontPage = "https://m.facebook.com/apple.realtimenews?refid=46&ref=dbl"
 txDate = generateDate('2020-01-01')
 
 
-
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
         print("frontPage url: ", url)
@@ -38,8 +37,6 @@ class Processor(PreCrawlerProcessor):
     def getNextPage(self, pageBar) -> str:
         url = generateMFBUrl(pageBar.get("href"))
         return url
-
-
 
 def startCraw():
     processor = Processor()
