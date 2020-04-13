@@ -5,20 +5,15 @@ from bs4 import BeautifulSoup
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login, lockedAccount
 from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl, randomSleep
 
-requests_count = 300
+
 
 def sendRequest(url, method="GET", params=None):
-    global requests_count
-    requests_count -= 1
-    if requests_count < 1:
-        login()
     resp = None
     if method.__eq__("GET"):
         resp = session.get(url)
     if method.__eq__("POST"):
         resp = session.post(url, data=params)
     resp.encoding = 'utf-8'
-    session.cookies.save()
     return resp
 
 def setReplyAttr(article, replyBarUrl):
@@ -165,15 +160,21 @@ def parseComments(article):
 
 
 def startParse(url):
-    email = login()
+    email = ''
     try:
+        email = login()
         article = parseArticle(url)
         # parseComments(article)
     except Exception as e:
         del article
+        if e is ValueError:
+            # Cookies 寫入發生錯誤，重試即可
+            pass
+        else:
+            lockedAccount(email, re.sub("'", "\"", e.__str__()))
+
         print('文章解析失敗 url: ', url)
         print('更換帳號後重試...')
-        lockedAccount(email, re.sub("'", "\"", e.__str__()))
         startParse(url)
 
 

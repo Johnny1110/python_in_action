@@ -70,7 +70,7 @@ def checkAllAccount():
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a;")
+        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.chackable = 'true';")
         acc_list = result.fetchall()
         print("acc_list : ", acc_list)
         for acc in acc_list:
