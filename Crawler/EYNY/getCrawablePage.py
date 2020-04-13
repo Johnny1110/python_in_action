@@ -23,7 +23,8 @@ class Processor(PreCrawlerProcessor):
         for stick in stickthreads:
             a_Tags = stick.findAll("a")
             time_area = a_Tags[-1]
-            postDate_str = re.search("[1-9][0-9][0-9][0-9]-[1]*[0-9]+-[1-3]*[0-9].*[AP]M", str(time_area)).group()
+            date_matcher = re.search("([1-9][0-9][0-9][0-9]-[1]*[0-9]+-[1-3]*[0-9].*?[AP]M)", str(time_area))
+            postDate_str = date_matcher.group(0)
             postDate = generateDate(postDate_str)
             if (postDate >= txDate):
                 url = {

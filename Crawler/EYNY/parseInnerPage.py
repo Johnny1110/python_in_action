@@ -17,11 +17,8 @@ def parseArticle(url, firstPageContent):
     article.articleDate = generateDate(postDateStr)
 
 
-
-
 def parseComments(article):
     pass
-
 
 def startParse(url):
     resp = session.get(url)
