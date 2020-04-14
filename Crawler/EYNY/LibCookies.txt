@@ -1,0 +1,7 @@
+#LWP-Cookies-2.0
+Set-Cookie3: 612e55XbD_e8d7_auth="75bfukl0%2Fjbz3o1scRyZy8oPQKuiUkhiipxqGmTi3cAYdw3o0L6ZIF8lwco0"; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2020-05-14 01:54:26Z"; httponly=None; version=0
+Set-Cookie3: 612e55XbD_e8d7_inlang=zh; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2020-04-15 01:54:26Z"; version=0
+Set-Cookie3: 612e55XbD_e8d7_lastact="1586829266%09member.php%09logging"; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2020-04-15 01:54:26Z"; version=0
+Set-Cookie3: 612e55XbD_e8d7_lastvisit=1586825666; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2020-05-14 01:54:26Z"; version=0
+Set-Cookie3: 612e55XbD_e8d7_txlang=0; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2020-04-15 01:54:26Z"; version=0
+Set-Cookie3: 612e55XbD_e8d7_ulastactivity="047abopmKRjCB3%2FiNGH2x9%2Bpf6Fs%2BYTVuoxFe6iMMZiSbXKs66TY"; path="/"; domain=".eyny.com"; path_spec; domain_dot; expires="2021-04-14 01:54:26Z"; version=0

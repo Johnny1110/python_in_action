@@ -55,7 +55,6 @@ def parseArticle(url):
     resp = sendRequest(url)
     soup = BeautifulSoup(resp.text, features='lxml')
     article = Entity()
-    print(url)
     article.url = str(re.search("https://.*refid=17", url).group()[0:-1])
     article.postId = toMD5(url)
     article.rid = article.postId
@@ -166,10 +165,14 @@ def startParse(url):
         article = parseArticle(url)
         # parseComments(article)
     except Exception as e:
-        del article
+        article = None
         if e is ValueError:
             # Cookies 寫入發生錯誤，重試即可
             pass
+        elif e is AttributeError:
+            print("爬取時發生錯誤，跳過 url: ", url)
+            print("錯誤發生原因: ", e.__str__())
+            return
         else:
             lockedAccount(email, re.sub("'", "\"", e.__str__()))
 

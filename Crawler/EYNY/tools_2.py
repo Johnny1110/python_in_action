@@ -1,6 +1,8 @@
 import datetime
 import hashlib
 import re
+from http import cookiejar
+
 import requests
 
 from abc import abstractmethod
@@ -17,6 +19,8 @@ headers = {
 
 session = requests.session()
 session.headers = headers
+session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
+session.cookies.load(ignore_discard=True, ignore_expires=True)
 
 # proxies = {
 #     'http': 'socks5h://localhost:9150',

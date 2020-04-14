@@ -12,7 +12,7 @@ def lockedAccount(email, msg):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        conn.execute("UPDATE account SET locked = 1, locked_msg = '{}', cookies_file = '' WHERE email = '{}'".format(msg, email))
+        conn.execute("UPDATE account SET locked = 'Y', locked_msg = '{}', cookies_file = '' WHERE email = '{}'".format(msg, email))
     except Exception as e:
         conn.rollback()
         print(e)
@@ -25,7 +25,7 @@ def unlockedAccount(email, cookieContentFile):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        conn.execute("UPDATE account SET locked = 0, locked_msg = '', cookies_file = '{}' WHERE email = '{}'".format(cookieContentFile, email))
+        conn.execute("UPDATE account SET locked = 'N', locked_msg = '', cookies_file = '{}' WHERE email = '{}'".format(cookieContentFile, email))
     except Exception as e:
         conn.rollback()
         print(e)
@@ -70,7 +70,7 @@ def checkAllAccount():
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.chackable = 'true';")
+        result = conn.execute("SELECT a.id, a.email, a.passwd, a.locked FROM account a WHERE a.chackable = 'Y';")
         acc_list = result.fetchall()
         print("acc_list : ", acc_list)
         for acc in acc_list:

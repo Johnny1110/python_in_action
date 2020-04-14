@@ -15,7 +15,7 @@ def getRandomAccount():
     account = None
     try:
         conn = sqlite3.connect(db_file)
-        result = conn.execute("SELECT a.id, a.email, a.passwd, a.cookies_file FROM account a WHERE a.locked = 0;")
+        result = conn.execute("SELECT a.id, a.email, a.passwd, a.cookies_file FROM account a WHERE a.locked = 'N';")
         acc_list = result.fetchall()
         if len(acc_list) == 0:
             raise RuntimeError("db 中沒有剩餘可用帳號了。")
@@ -34,7 +34,7 @@ def lockedAccount(email, msg):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        conn.execute("UPDATE account SET locked = 1, locked_msg = '{}' WHERE email = '{}'".format(msg, email))
+        conn.execute("UPDATE account SET locked = 'Y', locked_msg = '{}' WHERE email = '{}'".format(msg, email))
     except Exception as e:
         conn.rollback()
         print(e)
