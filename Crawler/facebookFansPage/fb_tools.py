@@ -94,6 +94,12 @@ def speculateArticlePostDate(date_str):
         target_day = today - datetime.timedelta(days=distance)
         return target_day
 
+    if re.match("^1?[0-9]+月[1-3]?[0-9]+日$", date_str):
+        date = re.search("1?[0-9]+月[1-3]?[0-9]+日", date_str).group()
+        year = datetime.datetime.today().year
+        date = "{}年{}".format(year, date)
+        date = datetime.datetime.strptime(date, "%Y年%m月%d日")
+        return date.replace(microsecond=0)
 
     if re.match("^1?[0-9]+月[1-3]?[0-9]+日[上下]午.*$", date_str):
         date = re.search("1?[0-9]+月[1-3]?[0-9]+日", date_str).group()
@@ -116,4 +122,6 @@ def speculateArticlePostDate(date_str):
             return date.replace(hour=int(time[0])+12, minute=int(time[1]), microsecond=0)
 
 if __name__ == '__main__':
-    login()
+    #login()
+    ans = speculateArticlePostDate("4月7日")
+    print(ans)
