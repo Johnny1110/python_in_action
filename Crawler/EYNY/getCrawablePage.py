@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, session, generateEYNYUrl
 
-frontPage = "https://www.eyny.com/forum-30-1.html"
+frontPage = "http://www36.eyny.com/forum-609-1.html"
 txDate = generateDate("2020-04-01")
 
 urlList = []

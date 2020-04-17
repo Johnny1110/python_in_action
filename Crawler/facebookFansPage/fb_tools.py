@@ -121,7 +121,7 @@ def speculateArticlePostDate(date_str):
         else:
             return date.replace(hour=int(time[0])+12, minute=int(time[1]), microsecond=0)
 
-if __name__ == '__main__':
-    #login()
-    ans = speculateArticlePostDate("4月7日")
-    print(ans)
+# if __name__ == '__main__':
+#     #login()
+#     ans = speculateArticlePostDate("4月7日")
+#     print(ans)

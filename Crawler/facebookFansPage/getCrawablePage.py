@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
 from Crawler.facebookFansPage.tools_2 import session, PreCrawlerProcessor, generateMFBUrl, generateDate, randomSleep
 
-frontPage = "https://m.facebook.com/apple.realtimenews?sectionLoadingID=m_timeline_loading_div_1609487999_1577865600_8_timeline_unit%3A1%3A00000000001581332400%3A04611686018427387904%3A09223372036854775733%3A04611686018427387904&unit_cursor=timeline_unit%3A1%3A00000000001581332400%3A04611686018427387904%3A09223372036854775733%3A04611686018427387904&timeend=1609487999&timestart=1577865600&tm=AQCmXU-Q-8vRsvy1&refid=17"
-txDate = generateDate('2018-04-13')
+frontPage = "https://m.facebook.com/apple.realtimenews"
+txDate = generateDate('2018-04-10')
 years_stack = 0
 
 def getNextPageBar(soup):
@@ -25,13 +25,14 @@ def getNextPageBar(soup):
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
         print("frontPage url: ", url)
-        # randomSleep()
+        randomSleep()
         resp = session.get(url)
         session.cookies.save()
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
         pageBar = getNextPageBar(soup)
-        articles = soup.findAll("div", {"role": "article"})
+        recent = soup.find("div", id="recent")
+        articles = recent.findAll("article")
         for a in articles:
             try:
                 abbr = a.find("abbr").getText()
