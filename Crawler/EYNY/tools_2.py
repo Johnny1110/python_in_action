@@ -19,7 +19,7 @@ headers = {
 
 session = requests.session()
 session.headers = headers
-session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
+session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt").set_cookie()
 session.cookies.load(ignore_discard=True, ignore_expires=True)
 
 # proxies = {

@@ -1,19 +1,26 @@
 import re
 
+import requests
 from bs4 import BeautifulSoup
 
-from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, session, generateEYNYUrl
+from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, generateEYNYUrl, headers
 
-frontPage = "http://www36.eyny.com/forum-609-1.html"
-txDate = generateDate("2020-04-01")
+frontPage = "http://www36.eyny.com/forum-526-3D41XTMV.html"
+txDate = generateDate("2020-01-01")
 
 urlList = []
 
+cookies = {
+    "612e55XbD_e8d7_agree": "1",
+    "612e55XbD_e8d7_videoadult": "1",
+}
+
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
-        resp = session.get(url)
+        resp = requests.get(url, cookies=cookies, headers=headers)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
+        print(soup)
         nextPageBar = soup.find("div", class_="pg")
         moderate = soup.find("form", id="moderate")
         stickthreads = moderate.findAll("tbody")
@@ -40,7 +47,6 @@ class Processor(PreCrawlerProcessor):
                 break
 
         return nextPageBar
-
 
     def getNextPage(self, pagesBar) -> str:
         nextPageTag = pagesBar.find("a", text="下一頁")
