@@ -4,8 +4,10 @@ from bs4 import BeautifulSoup
 
 from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, session, generateEYNYUrl
 
-frontPage = "http://www36.eyny.com/forum-392-2Y2K4P4S.html"
-txDate = generateDate("2019-12-12")
+frontPage = "https://www.eyny.com/forum-30-1.html"
+txDate = generateDate("2020-04-01")
+
+urlList = []
 
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
@@ -32,6 +34,7 @@ class Processor(PreCrawlerProcessor):
                     "postDate": str(postDate)
                 }
                 print(url)
+                urlList.append(url)
             else:
                 nextPageBar = None
                 break

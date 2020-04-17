@@ -17,6 +17,6 @@ if __name__ == '__main__':
 
     server = PbServerSocket()
     server.record_list.append(record)
-    server.record_list.append(recordEnd)
+    # server.record_list.append(recordEnd)
     server.startUp()
 

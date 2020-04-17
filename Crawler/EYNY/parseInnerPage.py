@@ -2,6 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
+from Crawler.EYNY.getCrawablePage import urlList, Processor, frontPage
 from Crawler.EYNY.tools_2 import session, Entity, toMD5, generateDate, generateEYNYUrl
 
 
@@ -13,7 +14,13 @@ def parseArticle(url, firstPageContent):
     main_post = soup.find("div", id=re.compile("^post_[0-9].*$"))
     article.postId = toMD5(main_post.get("id"))
     article.rid = article.postId
-    postDateStr = main_post.find("em", {"id": re.compile("authorposton.*")}).getText()[4:].strip()
+    postDateStr = ""
+    try:
+        postDateStr = main_post.find("em", {"id": re.compile("authorposton.*")}).getText()[4:].strip()
+        article.articleDate = generateDate(postDateStr)
+    except Exception:
+        postDateStr = main_post.find("em", {"id": re.compile("authorposton.*")}).span.get("title")
+        article.articleDate = generateDate(postDateStr)
     article.articleDate = generateDate(postDateStr)
     article.authorName = "???"
     try:
@@ -78,9 +85,14 @@ def startParse(url):
     resp.encoding = 'utf-8'
     firstPageContent = resp.text
     article = parseArticle(url, firstPageContent)
-    parseComments(article)
+    parseComments(article, isFirst=True)
 
 
 if __name__ == '__main__':
-    url = "http://www36.eyny.com/thread-695854-1-2Y2K4P4S.html"
-    startParse(url)
+    processor = Processor()
+    processor.start(frontPage)
+    for urlMap in urlList:
+        startParse(urlMap['url'])
+
+    # url = "https://www.eyny.com/thread-12624356-1-GU7Y04C7.html"
+    # startParse(url)
