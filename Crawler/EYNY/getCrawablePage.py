@@ -5,17 +5,15 @@ from bs4 import BeautifulSoup
 
 from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, generateEYNYUrl, headers
 
-frontPage = "http://www36.eyny.com/forum-526-3D41XTMV.html"
-txDate = generateDate("2020-01-01")
-
-cookies = {
-    "612e55XbD_e8d7_agree": "1",
-    "612e55XbD_e8d7_videoadult": "1",
-}
+frontPage = "http://www36.eyny.com/forum-3833-1.html"
+txDate = generateDate("2019-01-01")
 
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
-        resp = requests.get(url, cookies=cookies, headers=headers)
+        postData= {
+            "agree": "yes"
+        }
+        resp = requests.post(url,data=postData, headers=headers)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
         nextPageBar = soup.find("div", class_="pg")

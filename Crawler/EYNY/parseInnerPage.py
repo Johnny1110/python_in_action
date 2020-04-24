@@ -93,8 +93,11 @@ def startParse(url):
     resp = session.post(url, data=data)
     resp.encoding = 'utf-8'
     firstPageContent = resp.text
-    article = parseArticle(url, firstPageContent)
-    parseComments(article, isFirst=True)
+    try:
+        article = parseArticle(url, firstPageContent)
+        parseComments(article, isFirst=True)
+    except Exception:
+        print("爬取失敗: ", url)
 
 
 if __name__ == '__main__':
