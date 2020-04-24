@@ -3,7 +3,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from Crawler.EYNY.tools_2 import session, Entity, toMD5, generateDate, generateEYNYUrl, headers
+from Crawler.EYNY.tools_2 import session, Entity, toMD5, generateDate, generateEYNYUrl, headers, login
 
 cookies = {
     "612e55XbD_e8d7_agree": "1",
@@ -12,6 +12,7 @@ cookies = {
 
 def parseArticle(url, firstPageContent):
     soup = BeautifulSoup(firstPageContent, features='lxml')
+    print(soup)
     article = Entity()
     article.title = soup.find("title").getText()
     article.url = url
@@ -85,6 +86,7 @@ def parseComments(article, isFirst=False):
 
 
 def startParse(url):
+    login()
     data = {
         "agree": "yes"
     }
@@ -101,5 +103,5 @@ if __name__ == '__main__':
     # for urlMap in urlList:
     #     startParse(urlMap['url'])
 
-    url = "https://www.eyny.com/thread-12624356-1-GU7Y04C7.html"
+    url = "https://www.eyny.com/thread-12319018-1-EY2Y69P2.html"
     startParse(url)

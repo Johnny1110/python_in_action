@@ -1,7 +1,9 @@
 import datetime
 import hashlib
 import re
+import sqlite3
 from http import cookiejar
+import random
 
 import requests
 
@@ -9,8 +11,9 @@ from abc import abstractmethod
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
-
 site = '${SITENAME}'
+
+db_file = "eyny_fakeAcc.db"
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0',
@@ -19,8 +22,8 @@ headers = {
 
 session = requests.session()
 session.headers = headers
-session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt").set_cookie()
-session.cookies.load(ignore_discard=True, ignore_expires=True)
+session.cookies = cookiejar.LWPCookieJar(filename="LibCookies.txt")
+session.cookies.save()
 
 # proxies = {
 #     'http': 'socks5h://localhost:9150',
@@ -46,6 +49,33 @@ def extractAuthorName(content_str):
     author = re.search(".*?", content_str)
     return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
+def getRandomAccount():
+    conn = None
+    account = None
+    try:
+        conn = sqlite3.connect(db_file)
+        result = conn.execute("SELECT a.username, a.cookies FROM account a WHERE a.locked = 'N';")
+        acc_list = result.fetchall()
+        if len(acc_list) == 0:
+            raise RuntimeError("db 中沒有剩餘可用帳號了。")
+        acc_index = random.randint(0, len(acc_list) - 1)
+        account = acc_list[acc_index]
+    except Exception as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+        return account[0], account[1]
+
+def login():
+    username, cookies = getRandomAccount()
+    print("使用 EYNY 帳號 :　", username)
+    with open("LibCookies.txt", 'w') as cookieFile:
+        cookieFile.write(cookies)
+        cookieFile.close()
+    session.cookies.load(ignore_discard=True, ignore_expires=True)
+    print('cookies: ', session.cookies)
+    return username
 
 class PreCrawlerProcessor:
     @abstractmethod
@@ -164,4 +194,4 @@ class Entity:
         return newRecord
 
 if __name__ == '__main__':
-    pass
+    login()

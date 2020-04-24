@@ -3,6 +3,7 @@ import re
 from bs4 import BeautifulSoup
 
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login, lockedAccount
+from Crawler.facebookFansPage.getCrawablePage import urlList, startCraw
 from Crawler.facebookFansPage.tools_2 import session, Entity, toMD5, generateMFBUrl, randomSleep
 
 
@@ -182,5 +183,10 @@ def startParse(url):
 
 
 if __name__ == '__main__':
-    url = 'https://m.facebook.com/story.php?story_fbid=10156959683912190&id=145649977189&refid=17&_ft_=mf_story_key.10156959683912190%3Atop_level_post_id.10156959683912190%3Atl_objid.10156959683912190%3Acontent_owner_id_new.145649977189%3Athrowback_story_fbid.10156959683912190%3Apage_id.145649977189%3Aphoto_id.10156959673247190%3Astory_location.4%3Astory_attachment_style.photo%3Atds_flgs.3%3Apage_insights.%7B%22145649977189%22%3A%7B%22page_id%22%3A145649977189%2C%22actor_id%22%3A145649977189%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A266%2C%22publish_time%22%3A1587038402%2C%22story_name%22%3A%22EntStatusCreationStory%22%2C%22story_fbid%22%3A%5B10156959683912190%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%2C%22targets%22%3A%5B%7B%22actor_id%22%3A145649977189%2C%22page_id%22%3A145649977189%2C%22post_id%22%3A10156959683912190%2C%22role%22%3A1%2C%22share_id%22%3A0%7D%5D%7D%7D%3Athid.145649977189%3A306061129499414%3A2%3A0%3A1588316399%3A965192962691444686&__tn__=%2AW-R#footer_action_list'
-    startParse(url)
+    # url = 'https://m.facebook.com/story.php?story_fbid=10156959683912190&id=145649977189&refid=17&_ft_=mf_story_key.10156959683912190%3Atop_level_post_id.10156959683912190%3Atl_objid.10156959683912190%3Acontent_owner_id_new.145649977189%3Athrowback_story_fbid.10156959683912190%3Apage_id.145649977189%3Aphoto_id.10156959673247190%3Astory_location.4%3Astory_attachment_style.photo%3Atds_flgs.3%3Apage_insights.%7B%22145649977189%22%3A%7B%22page_id%22%3A145649977189%2C%22actor_id%22%3A145649977189%2C%22dm%22%3A%7B%22isShare%22%3A0%2C%22originalPostOwnerID%22%3A0%7D%2C%22psn%22%3A%22EntStatusCreationStory%22%2C%22post_context%22%3A%7B%22object_fbtype%22%3A266%2C%22publish_time%22%3A1587038402%2C%22story_name%22%3A%22EntStatusCreationStory%22%2C%22story_fbid%22%3A%5B10156959683912190%5D%7D%2C%22role%22%3A1%2C%22sl%22%3A4%2C%22targets%22%3A%5B%7B%22actor_id%22%3A145649977189%2C%22page_id%22%3A145649977189%2C%22post_id%22%3A10156959683912190%2C%22role%22%3A1%2C%22share_id%22%3A0%7D%5D%7D%7D%3Athid.145649977189%3A306061129499414%3A2%3A0%3A1588316399%3A965192962691444686&__tn__=%2AW-R#footer_action_list'
+    # startParse(url)
+    login()
+    startCraw()
+    urls = urlList
+    for url in urls:
+        startParse(url["url"])

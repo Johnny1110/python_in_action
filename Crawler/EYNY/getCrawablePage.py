@@ -8,8 +8,6 @@ from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, generateEYNY
 frontPage = "http://www36.eyny.com/forum-526-3D41XTMV.html"
 txDate = generateDate("2020-01-01")
 
-urlList = []
-
 cookies = {
     "612e55XbD_e8d7_agree": "1",
     "612e55XbD_e8d7_videoadult": "1",
@@ -20,7 +18,6 @@ class Processor(PreCrawlerProcessor):
         resp = requests.get(url, cookies=cookies, headers=headers)
         resp.encoding = 'utf-8'
         soup = BeautifulSoup(resp.text, features='lxml')
-        print(soup)
         nextPageBar = soup.find("div", class_="pg")
         moderate = soup.find("form", id="moderate")
         stickthreads = moderate.findAll("tbody")
@@ -41,7 +38,6 @@ class Processor(PreCrawlerProcessor):
                     "postDate": str(postDate)
                 }
                 print(url)
-                urlList.append(url)
             else:
                 nextPageBar = None
                 break

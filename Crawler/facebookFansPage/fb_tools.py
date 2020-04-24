@@ -56,6 +56,9 @@ def login():
 
 
 def speculateArticlePostDate(date_str):
+    if re.match("^剛剛$", date_str):
+        return datetime.datetime.now().replace(microsecond=0)
+
     if re.match("^[1-5]?[0-9]+ 分鐘$", date_str):
         minutes = int(date_str.replace("分鐘", "").strip())
         return (datetime.datetime.today() - datetime.timedelta(minutes=minutes)).replace(microsecond=0)

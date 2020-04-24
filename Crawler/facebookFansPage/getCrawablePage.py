@@ -6,9 +6,11 @@ from bs4 import BeautifulSoup
 from Crawler.facebookFansPage.fb_tools import speculateArticlePostDate, login
 from Crawler.facebookFansPage.tools_2 import session, PreCrawlerProcessor, generateMFBUrl, generateDate, randomSleep
 
-frontPage = "https://m.facebook.com/tcblife?refid=46&ref=dbl"
-txDate = generateDate('2019-04-10')
+frontPage = "https://m.facebook.com/YahooTWNews?refid=46&ref=dbl"
+txDate = generateDate('2020-01-01')
 years_stack = 0
+
+urlList = []
 
 def getNextPageBar(soup):
     pageBar = soup.find("a", text="顯示更多")
@@ -25,7 +27,7 @@ def getNextPageBar(soup):
 class Processor(PreCrawlerProcessor):
     def getCrawablePage(self, url) -> BeautifulSoup:
         print("frontPage url: ", url)
-        # randomSleep()
+        randomSleep()
         resp = session.get(url)
         session.cookies.save()
         resp.encoding = 'utf-8'
@@ -36,12 +38,14 @@ class Processor(PreCrawlerProcessor):
             try:
                 abbr = a.find("abbr").getText()
                 postDate = speculateArticlePostDate(abbr)
-                print("取得文章 url，postDate = ", postDate)
+                if postDate is None:
+                    continue
                 if postDate >= txDate:
                     target = {
                         'url': generateMFBUrl(a.find("a", text="完整動態").get("href"))
                     }
-                    print(target)
+                    urlList.append(target)
+                    print("取得文章 postDate: ", postDate, " 取得文章 url: ", target)
                 else:
                     pageBar = None
                     break
