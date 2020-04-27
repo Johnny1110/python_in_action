@@ -12,7 +12,6 @@ cookies = {
 
 def parseArticle(url, firstPageContent):
     soup = BeautifulSoup(firstPageContent, features='lxml')
-    print(soup)
     article = Entity()
     article.title = soup.find("title").getText()
     article.url = url
@@ -86,7 +85,6 @@ def parseComments(article, isFirst=False):
 
 
 def startParse(url):
-    login()
     data = {
         "agree": "yes"
     }
@@ -97,14 +95,20 @@ def startParse(url):
         article = parseArticle(url, firstPageContent)
         parseComments(article, isFirst=True)
     except Exception:
-        print("爬取失敗: ", url)
+        print("爬取失敗，不使用帳號再次嘗試: ", url)
+        session.cookies.clear()
+        resp = session.post(url, data=data)
+        resp.encoding = 'utf-8'
+        firstPageContent = resp.text
+        try:
+            article = parseArticle(url, firstPageContent)
+            parseComments(article, isFirst=True)
+        except Exception:
+            print("第二次嘗試失敗，跳過...")
+
 
 
 if __name__ == '__main__':
-    # processor = Processor()
-    # processor.start(frontPage)
-    # for urlMap in urlList:
-    #     startParse(urlMap['url'])
-
-    url = "https://www.eyny.com/thread-12319018-1-EY2Y69P2.html"
+    # login()
+    url = "http://www36.eyny.com/thread-3861872-1-23KWCK7F.html"
     startParse(url)

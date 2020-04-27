@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 from Crawler.EYNY.tools_2 import generateDate, PreCrawlerProcessor, generateEYNYUrl, headers
 
-frontPage = "http://www36.eyny.com/forum-3833-1.html"
+frontPage = "http://www36.eyny.com/forum-1767-1.html"
 txDate = generateDate("2019-01-01")
 
 class Processor(PreCrawlerProcessor):
