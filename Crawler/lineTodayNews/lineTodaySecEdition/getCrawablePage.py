@@ -26,12 +26,11 @@ def getAllPageUrl():
         resp.encoding = 'utf-8'
         items = resp.json()
         for item in items['items']:
-            print(item)
             urlMap = {
                 "title": item['title'],
                 "url": buildInnerPageURL(item['url']['hash'])
             }
-            print(urlMap)
+            yield urlMap
 
 def buildListingURL(id):
     return "https://today.line.me/api/v6/listings/{}?offset=0&length=1000&country=tw".format(id)
@@ -39,5 +38,9 @@ def buildListingURL(id):
 def buildInnerPageURL(url_hash):
     return "https://today.line.me/tw/article/{}".format(url_hash)
 
+def startCraw():
+    for data in getAllPageUrl():
+        print(data)
+
 if __name__ == '__main__':
-    getAllPageUrl()
+    startCraw()

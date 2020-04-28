@@ -40,6 +40,10 @@ def extractAuthorName(content_str):
     author = re.search(".*?", content_str)
     return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
+# define
+def extractTsecDate(t_sec):
+    t_sec = int(t_sec)
+    return datetime.datetime.fromtimestamp(t_sec / 1e3)
 
 class PreCrawlerProcessor:
     @abstractmethod
@@ -138,6 +142,22 @@ class Entity:
         else:
             return ""
 
+    @property
+    def likescnt(self) -> str:
+        return self.__likescnt
+
+    @likescnt.setter
+    def likescnt(self, likescnt: str):
+        self.__likescnt = likescnt
+
+    @property
+    def replycnt(self) -> str:
+        return self.__replycnt
+
+    @replycnt.setter
+    def replycnt(self, replycnt: str):
+        self.__replycnt = replycnt
+
     def getAttr(self, key):
         return self.__attr[key]
 
@@ -155,6 +175,8 @@ class Entity:
         newRecord['postId'] = self.__postId
         newRecord['rid'] = self.__rid
         newRecord['pid'] = self.pid
+        newRecord['likescnt'] = self.__likescnt
+        newRecord['replycnt'] = self.__replycnt
         return newRecord
 
 if __name__ == '__main__':
