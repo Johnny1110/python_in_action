@@ -1,0 +1,6 @@
+公共電視_政經;https://news.pts.org.tw/category/2
+公共電視_環境生態;https://news.pts.org.tw/category/3
+公共電視_全球;https://news.pts.org.tw/category/4
+公共電視_生活綜合;https://news.pts.org.tw/category/5
+公共電視_文教科技;https://news.pts.org.tw/category/6
+公共電視_社會;https://news.pts.org.tw/category/7
