@@ -3,15 +3,15 @@ from bs4 import BeautifulSoup
 from Crawler.appleDaily.refactor.tools_2 import generateDate, PreCrawlerProcessor, session, Entity, toMD5, \
     generateAppleDailyUrl
 
-frontPage = "https://tw.appledaily.com/realtime/international"
-txDate = generateDate("2020-02-01")
+frontPage = "https://tw.appledaily.com/realtime/topic"
+txDate = generateDate("2020-05-01")
 
 
 def collectData(elem):
     article = Entity()
     article.url = generateAppleDailyUrl(elem['website_url'])
     article.title = elem['headlines']['basic']
-    article.articleDate = generateDate(elem['publish_date'])
+    article.articleDate = generateDate(elem['created_date'])
     article.postId = toMD5(elem['_id'])
     article.rid = article.postId
     article.authorName = elem['owner']['id']
@@ -29,11 +29,16 @@ class Processor(PreCrawlerProcessor):
         resp = session.get(url)
         resp.encoding = 'utf-8'
         jsonData = resp.json()
+        print(jsonData)
         content_elems = jsonData['content_elements']
         for elem in content_elems:
-            publish_date = generateDate(elem['publish_date'])
+            publish_date = generateDate(elem['display_date'])
+            print(publish_date)
             if publish_date >= txDate:
-                article = collectData(elem)
+                try:
+                    article = collectData(elem)
+                except Exception:
+                    continue
                 print(article.toMap())
 
     def getNextPage(self, pagesBar) -> str:
@@ -46,4 +51,5 @@ if __name__ == '__main__':
     processor = Processor()
     clazz = frontPage.split("/")[-1]
     url = generateAPI(clazz)
+    url = "https://tw.appledaily.com/pf/api/v3/content/fetch/content-by-tag?query={%22size%22%3A100%2C%22tag%22%3A%22mt_%E5%B0%88%E9%A1%8C%22%2C%22website%22%3A%22tw-appledaily%22}"
     processor.start(url)
