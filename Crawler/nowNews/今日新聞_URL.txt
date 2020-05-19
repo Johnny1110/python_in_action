@@ -1,0 +1,13 @@
+Nownews_娛樂;https://www.nownews.com/cat/entertainment/
+Nownews_政治;https://www.nownews.com/cat/politics/
+Nownews_觀點;https://www.nownews.com/cat/forum-2/
+Nownews_國際;https://www.nownews.com/cat/global/
+Nownews_運動;https://www.nownews.com/cat/sport/
+Nownews_房產;https://www.nownews.com/cat/house2/
+Nownews_財經;https://www.nownews.com/cat/finance/
+Nownews_兩岸;https://www.nownews.com/cat/chinaindex/
+Nownews_新奇;https://www.nownews.com/cat/novelty/
+Nownews_生活;https://www.nownews.com/cat/life/
+Nownews_社會;https://www.nownews.com/cat/society/
+Nownews_地方;https://www.nownews.com/cat/local/
+Nownews_健康;https://www.nownews.com/cat/health-life/
