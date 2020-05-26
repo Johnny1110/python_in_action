@@ -1,0 +1,11 @@
+自由時報_政治;https://news.ltn.com.tw/list/breakingnews/politics
+自由時報_社會;https://news.ltn.com.tw/list/breakingnews/society
+自由時報_生活;https://news.ltn.com.tw/list/breakingnews/life
+自由時報_國際;https://news.ltn.com.tw/list/breakingnews/world
+自由時報_地方;https://news.ltn.com.tw/list/breakingnews/local
+自由時報_蒐奇;https://news.ltn.com.tw/list/breakingnews/novelty
+自由時報_汽車;https://auto.ltn.com.tw/
+自由時報_時尚;https://istyle.ltn.com.tw/
+自由時報_體育;https://sports.ltn.com.tw/
+自由時報_3C;https://3c.ltn.com.tw/
+自由時報_玩咖;https://playing.ltn.com.tw/
