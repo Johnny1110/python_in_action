@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 
 from Crawler.nowNews.tools_2 import generateDate, PreCrawlerProcessor, session, generateNowNewsUrl
 
-frontPage = "https://www.nownews.com/cat/entertainment/"
-txDate = generateDate("2020-05-17")
+frontPage = "https://www.nownews.com/cat/health-life/"
+txDate = generateDate("2020-05-01")
 
 def buildFrontJsonUrl(frontPage):
     par = frontPage.split("/")[-2]
@@ -12,7 +12,8 @@ def buildFrontJsonUrl(frontPage):
     return jsonUrl
 
 def generateNextJsonUrl(postId):
-    jsonUrl = "https://www.nownews.com/nn-client/api/v1/cat/entertainment/?pid={}".format(postId)
+    class_ = frontPage.split("/")[-2]
+    jsonUrl = "https://www.nownews.com/nn-client/api/v1/cat/{}/?pid={}".format(class_, postId)
     return jsonUrl
 
 # 實作 fillDataToQueue() 與 getNextPage() 就可以了。
@@ -38,6 +39,7 @@ class Processor(PreCrawlerProcessor):
             return generateNextJsonUrl(postId)
 
     def getNextPage(self, jsonUrl) -> str:
+        print("next: ", jsonUrl)
         return jsonUrl
 
 

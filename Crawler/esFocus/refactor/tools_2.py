@@ -1,9 +1,6 @@
 import datetime
 import hashlib
 import re
-import random
-from time import sleep
-
 import requests
 
 from abc import abstractmethod
@@ -26,35 +23,21 @@ session = requests.session()
 # session.proxies = proxies
 session.headers = headers
 
-def dateStrFilter(date_str):
-    date_str = re.search(".{4}年.{2}月.{2}日 .{2}:.{2}[:]{0,1}.{0,2}", date_str)
-    return date_str.group()
-
-def randomSleep():
-    sec = random.randint(1, 3)
-    sleep(sec)
-
 def toMD5(data):
     m = hashlib.md5()
     m.update(data.encode("utf-8"))
     return m.hexdigest()
 
-def generateDate(date_str, Chinese=False):
-    if Chinese:
-        try:
-            return datetime.datetime.strptime(date_str, "%Y年%m月%d日 %H:%M")
-        except Exception:
-            return datetime.datetime.strptime(date_str, "%Y年%m月%d日 %H:%M:%S")
-    else:
-        return parse(date_str).replace(microsecond=0, tzinfo=None)
+def generateDate(date_str):
+    return parse(date_str).replace(microsecond=0, tzinfo=None)
 
 # define
-def generateUpUrl(target):
-    return "https://www.upmedia.mg/" + target
+def generateEsUrl(target):
+    return "https://www.eventsinfocus.org" + target
 
 # define
 def extractAuthorName(content_str):
-    author = re.search(".*?", content_str)
+    author = re.search("焦點事件記者.+?報導", content_str)
     return author.group() if (author is not None) and (len(author.group()) < 15) else ""
 
 

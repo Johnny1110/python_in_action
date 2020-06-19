@@ -16,11 +16,11 @@ headers = {
 }
 
 session = requests.session()
-proxies = {
-    'http': 'socks5h://localhost:9150',
-    'https': 'socks5h://localhost:9150',
-}
-session.proxies = proxies
+# proxies = {
+#     'http': 'socks5h://localhost:9150',
+#     'https': 'socks5h://localhost:9150',
+# }
+# session.proxies = proxies
 session.headers = headers
 
 def toMD5(data):
@@ -32,8 +32,8 @@ def generateDate(date_str):
     return parse(date_str).replace(microsecond=0, tzinfo=None)
 
 # define
-def generateBTUrl(target):
-    return "https://#" + target
+def generateFormosaUrl(target):
+    return "http://www.my-formosa.com/" + target
 
 # define
 def extractAuthorName(content_str):

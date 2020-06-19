@@ -24,5 +24,6 @@ def startParse(url):
 
 
 if __name__ == '__main__':
-    url = "https://www.gvm.com.tw/article/70761"
+    url = "https://www.gvm.com.tw/article/71976"
     article = startParse(url)
+    print(article.toList())

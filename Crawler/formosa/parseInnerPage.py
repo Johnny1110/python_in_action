@@ -17,9 +17,9 @@ def startParse(url, html):
     article.title = main_content.find("h1").getText()
     article.articleDate = generateDate(main_content.find("small", class_="date").getText().strip())
     article.content = main_content.find("div", class_="body").getText().strip()
-    article.authorName = main_content.find("article").getText()
+    article.authorName = main_content.find("article").h4.getText()
     if len(article.authorName) > 100:
-        article.authorName = "?"
+        article.authorName = "?"     
     outqueue.put(article.toList())
     return article
 

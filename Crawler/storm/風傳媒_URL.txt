@@ -1,0 +1,12 @@
+風傳媒_政治;https://www.storm.mg/category/118
+風傳媒_國際;https://www.storm.mg/category/117
+風傳媒_軍事;https://www.storm.mg/category/26644
+風傳媒_國內;https://www.storm.mg/category/22172
+風傳媒_中港澳;https://www.storm.mg/category/121
+風傳媒_歷史頻道;https://www.storm.mg/history
+風傳媒_調查;https://www.storm.mg/category/24667
+風傳媒_風數據;https://www.storm.mg/category/36948
+風傳媒_運動;https://www.storm.mg/category/118606
+風傳媒_地方新聞;https://www.storm.mg/localarticles
+風傳媒_公民運動;https://www.storm.mg/category/965
+風傳媒_公共政策;https://www.storm.mg/category/22168

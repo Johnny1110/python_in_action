@@ -8,7 +8,7 @@ outqueue = Queue()
 
 
 frontPage = "https://www.gvm.com.tw/category/business"
-txDate = generateTxDate("2020-02-01")
+txDate = generateTxDate("2020-04-01")
 
 class Processor(PreCrawlerProcessor):
     def fillDataToQueue(self, url):

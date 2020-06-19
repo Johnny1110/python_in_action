@@ -16,11 +16,11 @@ headers = {
 }
 
 session = requests.session()
-proxies = {
-    'http': 'socks5h://localhost:9150',
-    'https': 'socks5h://localhost:9150',
-}
-session.proxies = proxies
+# proxies = {
+#     'http': 'socks5h://localhost:9150',
+#     'https': 'socks5h://localhost:9150',
+# }
+# session.proxies = proxies
 session.headers = headers
 
 def toMD5(data):

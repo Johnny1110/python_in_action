@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 from Crawler.esFocus.tools import generateTxDate, PreCrawlerProcessor, extractPostDate, generateEsUrl
 
-txDate = generateTxDate("2019-12-30")
+txDate = generateTxDate("2019-06-01")
 frontPage = "https://www.eventsinfocus.org/news?page=0"
 
 outqueue = Queue()
