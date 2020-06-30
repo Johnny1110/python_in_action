@@ -1,0 +1,4 @@
+天下雜誌_國際;https://www.cw.com.tw/masterChannel.action?idMasterChannel=9
+天下雜誌_財經;https://www.cw.com.tw/masterChannel.action?idMasterChannel=8
+天下雜誌_調查報導;https://www.cw.com.tw/masterChannel.action?idMasterChannel=15
+天下雜誌_健康關係;https://www.cw.com.tw/masterChannel.action?idMasterChannel=79
