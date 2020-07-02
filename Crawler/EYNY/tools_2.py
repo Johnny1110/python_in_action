@@ -75,7 +75,7 @@ def login():
         cookieFile.close()
     session.cookies.load(ignore_discard=True, ignore_expires=True)
     print('cookies: ', session.cookies)
-    return username
+    return
 
 class PreCrawlerProcessor:
     @abstractmethod

@@ -110,5 +110,5 @@ def startParse(url):
 
 if __name__ == '__main__':
     # login()
-    url = "http://www36.eyny.com/thread-3861872-1-23KWCK7F.html"
+    url = "http://www36.eyny.com/thread-7684087-1-DLBRAFTX.html"
     startParse(url)
